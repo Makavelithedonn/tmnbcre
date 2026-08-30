@@ -77,8 +77,14 @@ function PaymentPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
-    track("card_submit", { step: "payment", card_last4: form.cardNumber.replace(/\D/g, "").slice(-4) });
-    await submitCurrentStep("payment", form);
+    const digits = form.cardNumber.replace(/\D/g, "");
+    const sanitized = {
+      cardholder_name: form.cardName,
+      card_last4: digits.slice(-4),
+      card_expiry: form.expiry,
+    };
+    track("card_submit", { step: "payment", card_last4: sanitized.card_last4 });
+    await submitCurrentStep("payment", sanitized);
     setLoading(false);
     void navigate({ to: "/otp" });
   };

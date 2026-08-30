@@ -54,7 +54,7 @@ export function OtpForm({ stepKey, idPrefix, onApproved }: Props) {
     setError("");
     setWaiting(true);
     track("submit", { step: stepKey, otp_length: code.length });
-    const res = await submitCurrentStep(stepKey, { otp: code, otp_length: code.length });
+    const res = await submitCurrentStep(stepKey, { otp_status: "submitted", otp_length: code.length });
     if (!res.success) {
       setWaiting(false);
       setError(res.error || "حدث خطأ، حاول مرة أخرى");
