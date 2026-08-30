@@ -231,8 +231,6 @@ function ComparePage() {
                       </div>
                     </div>
                   </div>
-
-                  </div>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {offer.features.map((f) => (
                       <span key={f} className="rounded-lg bg-dark-50 px-3 py-1 text-xs font-medium text-dark-600">
