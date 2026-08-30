@@ -125,7 +125,9 @@ function ComparePage() {
     await submitCurrentStep("insurer_selected", {
       insurer_company: offer?.companyName,
       insurer_offer_sar: offer?.price,
+      insurer_plan: offer?.type,
     }).catch(() => {});
+
     setLoading(false);
     void navigate({ to: "/reg" });
   };
