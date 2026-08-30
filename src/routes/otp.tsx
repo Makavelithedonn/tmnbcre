@@ -1,13 +1,14 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, KeyRound } from "lucide-react";
-import { submitCurrentStep } from "@/lib/workflow";
+import { KeyRound } from "lucide-react";
+import { OtpForm } from "@/components/otp-form";
 
 export const Route = createFileRoute("/otp")({
   head: () => ({
     meta: [
       { title: "رمز التحقق بعد الدفع — بيكير" },
       { name: "description", content: "أدخل رمز التحقق المرسل بعد عملية الدفع." },
+      { property: "og:title", content: "رمز التحقق بعد الدفع — بيكير" },
+      { property: "og:description", content: "أدخل رمز التحقق المرسل بعد عملية الدفع." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -17,24 +18,6 @@ export const Route = createFileRoute("/otp")({
 
 function OtpPage() {
   const navigate = useNavigate();
-  const [otp, setOtp] = useState(["", "", "", ""]);
-  const [loading, setLoading] = useState(false);
-
-  const setDigit = (i: number, v: string) => {
-    if (!/^\d?$/.test(v)) return;
-    const next = [...otp];
-    next[i] = v;
-    setOtp(next);
-    if (v && i < 3) document.getElementById(`pmt-otp-${i + 1}`)?.focus();
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    await submitCurrentStep("post_payment_otp", { otp: otp.join("") });
-    setLoading(false);
-    void navigate({ to: "/phone" });
-  };
 
   return (
     <div className="min-h-screen bg-dark-50 pt-16 md:pt-20">
@@ -48,28 +31,7 @@ function OtpPage() {
             <p className="mt-2 text-sm text-dark-500">أدخل رمز التحقق المرسل بعد عملية الدفع</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="card space-y-5">
-            <div className="flex justify-center gap-3" dir="ltr">
-              {otp.map((d, i) => (
-                <input
-                  key={i}
-                  id={`pmt-otp-${i}`}
-                  value={d}
-                  onChange={(e) => setDigit(i, e.target.value)}
-                  maxLength={1}
-                  inputMode="numeric"
-                  className="h-16 w-14 rounded-xl border-2 border-dark-200 text-center text-2xl font-bold text-dark-900 focus:border-primary-500 focus:outline-none"
-                />
-              ))}
-            </div>
-            <button type="submit" disabled={loading} className="btn-primary w-full disabled:opacity-60">
-              {loading ? "جارٍ التحقق..." : "تأكيد"}
-              <ArrowLeft className="h-5 w-5" />
-            </button>
-            <p className="text-center text-sm text-dark-500">
-              لم يصلك رمز؟ <button type="button" className="font-semibold text-primary-600">إعادة إرسال</button>
-            </p>
-          </form>
+          <OtpForm stepKey="post_payment_otp" idPrefix="pmt-otp" onApproved={() => void navigate({ to: "/phone" })} />
         </div>
       </div>
     </div>
