@@ -116,12 +116,15 @@ function InsuranceQuotePage() {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">الهوية الوطنية / الإقامة</label>
-                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value)} required className="input-field" placeholder="10xxxxxxxxx" inputMode="numeric" maxLength={10} />
+                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, nationalId: form.nationalId ? validateNationalId(form.nationalId) : "" }))} required className="input-field" placeholder="1xxxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["nationalId"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["nationalId"]}</p>}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">رقم الجوال</label>
-                <input value={form.phone} onChange={(e) => update("phone", e.target.value)} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} />
+                <input value={form.phone} onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, phone: form.phone ? validatePhone(form.phone) : "" }))} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["phone"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["phone"]}</p>}
               </div>
+
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">ماركة السيارة</label>
                 <select value={form.carBrand} onChange={(e) => update("carBrand", e.target.value)} required className="input-field">
