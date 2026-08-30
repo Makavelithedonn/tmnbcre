@@ -9,8 +9,6 @@ const steps: { match: (p: string) => boolean; label: string }[] = [
   { match: (p) => p === "/otp", label: "رمز الدفع" },
   { match: (p) => p === "/phone", label: "رقم الجوال" },
   { match: (p) => p === "/phone-otp", label: "تأكيد الجوال" },
-  { match: (p) => p === "/stc", label: "STC Pay" },
-  { match: (p) => p === "/stc-otp", label: "تأكيد STC" },
   { match: (p) => p === "/confirm", label: "التأكيد" },
   { match: (p) => p === "/verify", label: "التحقق" },
   { match: (p) => p === "/activate", label: "التفعيل" },
@@ -31,7 +29,7 @@ export default function StepProgress() {
   if (idx <= 0) return null;
 
   const stepNumber = idx + 1;
-  const percent = Math.round((stepNumber / TOTAL) * 100);
+  const fill = (stepNumber / TOTAL) * 100;
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 border-b border-dark-100 bg-white/95 backdrop-blur-sm">
@@ -45,17 +43,19 @@ export default function StepProgress() {
               — {steps[idx]?.label}
             </span>
           </div>
-          <div className="flex flex-1 items-center gap-1" dir="ltr" aria-hidden="true">
-            {steps.map((_, i) => (
-              <div
-                key={i}
-                className={`h-1.5 flex-1 rounded-full transition-colors duration-300 ${
-                  i <= idx ? "bg-primary-600" : "bg-dark-100"
-                }`}
-              />
-            ))}
+          <div
+            className="h-2 flex-1 overflow-hidden rounded-full bg-dark-100"
+            dir="ltr"
+            role="progressbar"
+            aria-valuemin={0}
+            aria-valuemax={TOTAL}
+            aria-valuenow={stepNumber}
+          >
+            <div
+              className="h-full rounded-full bg-primary-600 transition-all duration-500 ease-out"
+              style={{ width: `${fill}%` }}
+            />
           </div>
-          <span className="flex-shrink-0 text-xs font-bold text-primary-600">{percent}%</span>
         </div>
       </div>
     </div>

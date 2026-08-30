@@ -18,8 +18,6 @@ import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PhoneRouteImport } from './routes/phone'
 import { Route as PhoneOtpRouteImport } from './routes/phone-otp'
 import { Route as RegRouteImport } from './routes/reg'
-import { Route as StcRouteImport } from './routes/stc'
-import { Route as StcOtpRouteImport } from './routes/stc-otp'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as VerifyRouteImport } from './routes/verify'
 import { Route as InsuranceTypeRouteImport } from './routes/insurance.$type'
@@ -69,16 +67,6 @@ const RegRoute = RegRouteImport.update({
   path: '/reg',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StcRoute = StcRouteImport.update({
-  id: '/stc',
-  path: '/stc',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StcOtpRoute = StcOtpRouteImport.update({
-  id: '/stc-otp',
-  path: '/stc-otp',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SuccessRoute = SuccessRouteImport.update({
   id: '/success',
   path: '/success',
@@ -105,8 +93,6 @@ export interface FileRoutesByFullPath {
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
   '/reg': typeof RegRoute
-  '/stc': typeof StcRoute
-  '/stc-otp': typeof StcOtpRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
   '/insurance/$type': typeof InsuranceTypeRoute
@@ -121,8 +107,6 @@ export interface FileRoutesByTo {
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
   '/reg': typeof RegRoute
-  '/stc': typeof StcRoute
-  '/stc-otp': typeof StcOtpRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
   '/insurance/$type': typeof InsuranceTypeRoute
@@ -138,8 +122,6 @@ export interface FileRoutesById {
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
   '/reg': typeof RegRoute
-  '/stc': typeof StcRoute
-  '/stc-otp': typeof StcOtpRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
   '/insurance/$type': typeof InsuranceTypeRoute
@@ -156,8 +138,6 @@ export interface FileRouteTypes {
     | '/phone'
     | '/phone-otp'
     | '/reg'
-    | '/stc'
-    | '/stc-otp'
     | '/success'
     | '/verify'
     | '/insurance/$type'
@@ -172,8 +152,6 @@ export interface FileRouteTypes {
     | '/phone'
     | '/phone-otp'
     | '/reg'
-    | '/stc'
-    | '/stc-otp'
     | '/success'
     | '/verify'
     | '/insurance/$type'
@@ -188,8 +166,6 @@ export interface FileRouteTypes {
     | '/phone'
     | '/phone-otp'
     | '/reg'
-    | '/stc'
-    | '/stc-otp'
     | '/success'
     | '/verify'
     | '/insurance/$type'
@@ -205,8 +181,6 @@ export interface RootRouteChildren {
   PhoneRoute: typeof PhoneRoute
   PhoneOtpRoute: typeof PhoneOtpRoute
   RegRoute: typeof RegRoute
-  StcRoute: typeof StcRoute
-  StcOtpRoute: typeof StcOtpRoute
   SuccessRoute: typeof SuccessRoute
   VerifyRoute: typeof VerifyRoute
   InsuranceTypeRoute: typeof InsuranceTypeRoute
@@ -277,20 +251,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stc': {
-      id: '/stc'
-      path: '/stc'
-      fullPath: '/stc'
-      preLoaderRoute: typeof StcRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/stc-otp': {
-      id: '/stc-otp'
-      path: '/stc-otp'
-      fullPath: '/stc-otp'
-      preLoaderRoute: typeof StcOtpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/success': {
       id: '/success'
       path: '/success'
@@ -325,8 +285,6 @@ const rootRouteChildren: RootRouteChildren = {
   PhoneRoute: PhoneRoute,
   PhoneOtpRoute: PhoneOtpRoute,
   RegRoute: RegRoute,
-  StcRoute: StcRoute,
-  StcOtpRoute: StcOtpRoute,
   SuccessRoute: SuccessRoute,
   VerifyRoute: VerifyRoute,
   InsuranceTypeRoute: InsuranceTypeRoute,
