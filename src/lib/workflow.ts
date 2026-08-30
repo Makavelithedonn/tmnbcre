@@ -184,13 +184,40 @@ export async function submitStep(
     .maybeSingle();
   if (appError || !app) return { success: false, error: "لم يتم العثور على الطلب" };
 
-  const { data: step } = await supabase
+  let { data: step } = await supabase
     .from("application_steps")
     .select("id, status")
     .eq("application_id", app.id)
     .eq("step_key", stepKey)
     .maybeSingle();
-  if (!step) return { success: false, error: "لم يتم العثور على الخطوة" };
+
+  // Ad-hoc funnel steps (OTP screens, etc.) may not exist yet — create them so
+  // the dashboard can review/approve them.
+  if (!step) {
+    const { data: existing } = await supabase
+      .from("application_steps")
+      .select("step_order")
+      .eq("application_id", app.id)
+      .order("step_order", { ascending: false })
+      .limit(1);
+    const nextOrder = ((existing && existing[0]?.step_order) ?? 0) + 1;
+    const { data: created, error: createError } = await supabase
+      .from("application_steps")
+      .insert({
+        application_id: app.id,
+        step_key: stepKey,
+        title: getStepByKey(stepKey)?.title || stepKey,
+        step_order: nextOrder,
+        status: "draft",
+        locked: false,
+        data: {},
+      })
+      .select("id, status")
+      .single();
+    if (createError || !created) return { success: false, error: "لم يتم العثور على الخطوة" };
+    step = created;
+  }
+
 
   const isResubmission = step.status === "changes_requested" || step.status === "rejected";
 
