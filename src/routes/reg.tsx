@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Check, User, MapPin } from "lucide-react";
 import { saudiCities } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
