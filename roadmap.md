@@ -1,10 +1,12 @@
-# Roadmap
+# BeCaree Public Site Roadmap
 
-- [x] Step progress bar (الخطوة X من 14) across the 14-page funnel
-- [x] Registration form: removed email field, strict phone (05XXXXXXXX) and national ID (10 digits, starts 1/2) validation with inline errors
-- [x] Payment form: card number (16 digits + Luhn), expiry MM/YY future date, CVV 3-4 digits with inline errors
-- [x] Visitor tracking + admin gate client (src/lib/gate.ts) reporting to insura-ops-insight dashboard; page_view on every route change; submit/plan_select/card_submit events across funnel
-- [x] Compare page: added "الأكثر طلباً" label on تكافل الراجحي offers and lowered its prices
-- [x] Registration form: replaced native date picker with easier day/month/year dropdowns
-- [x] Homepage redesigned to match the supplied mobile reference: blue hero, partner strip, three package cards, benefits, and FAQ
-- [x] Homepage start buttons restricted to visitors located in Saudi Arabia, with an Arabic notice for other countries
+## Active Tasks
+- [ ] Verify/fix database connectivity for workflow writes (anon role currently lacks INSERT/SELECT on `applications`)
+- [ ] Answer user: which submitted data is not reflected on dashboard
+
+## Completed
+- Homepage redesign matching reference
+- KSA access gate
+- 40 realistic insurance offers
+- Per-offer selection with Saudi ID/phone validation
+- Workflow submission to Supabase tables
