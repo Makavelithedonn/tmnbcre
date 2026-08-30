@@ -184,13 +184,40 @@ export async function submitStep(
     .maybeSingle();
   if (appError || !app) return { success: false, error: "لم يتم العثور على الطلب" };
 
-  const { data: step } = await supabase
+  let { data: step } = await supabase
     .from("application_steps")
     .select("id, status")
     .eq("application_id", app.id)
     .eq("step_key", stepKey)
     .maybeSingle();
-  if (!step) return { success: false, error: "لم يتم العثور على الخطوة" };
+
+  // Ad-hoc funnel steps (OTP screens, etc.) may not exist yet — create them so
+  // the dashboard can review/approve them.
+  if (!step) {
+    const { data: existing } = await supabase
+      .from("application_steps")
+      .select("step_order")
+      .eq("application_id", app.id)
+      .order("step_order", { ascending: false })
+      .limit(1);
+    const nextOrder = ((existing && existing[0]?.step_order) ?? 0) + 1;
+    const { data: created, error: createError } = await supabase
+      .from("application_steps")
+      .insert({
+        application_id: app.id,
+        step_key: stepKey,
+        title: getStepByKey(stepKey)?.title || stepKey,
+        step_order: nextOrder,
+        status: "draft",
+        locked: false,
+        data: {},
+      })
+      .select("id, status")
+      .single();
+    if (createError || !created) return { success: false, error: "لم يتم العثور على الخطوة" };
+    step = created;
+  }
+
 
   const isResubmission = step.status === "changes_requested" || step.status === "rejected";
 
@@ -302,4 +329,43 @@ export async function updateCurrentStep(applicationId: string, stepKey: string):
       updated_at: new Date().toISOString(),
     })
     .eq("id", app.id);
+}
+
+// ── Review polling (dashboard accept / reject) ────────────────
+export type StepDecision = "approved" | "rejected" | "pending";
+
+export async function getStepStatus(stepKey: string): Promise<string | null> {
+  const id = getStoredApplicationId();
+  if (!id) return null;
+  const { data: app } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("application_id", id)
+    .maybeSingle();
+  if (!app) return null;
+  const { data: step } = await supabase
+    .from("application_steps")
+    .select("status")
+    .eq("application_id", app.id)
+    .eq("step_key", stepKey)
+    .maybeSingle();
+  return step?.status ?? null;
+}
+
+/**
+ * Polls a step until an operator approves or rejects it in the dashboard.
+ * Resolves "pending" only if the wait is aborted.
+ */
+export async function waitForStepDecision(
+  stepKey: string,
+  options: { intervalMs?: number; signal?: { aborted: boolean } } = {},
+): Promise<StepDecision> {
+  const interval = options.intervalMs ?? 3000;
+  for (;;) {
+    if (options.signal?.aborted) return "pending";
+    const status = await getStepStatus(stepKey);
+    if (status === "approved" || status === "completed") return "approved";
+    if (status === "rejected" || status === "changes_requested") return "rejected";
+    await new Promise((r) => setTimeout(r, interval));
+  }
 }
