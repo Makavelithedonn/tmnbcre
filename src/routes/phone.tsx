@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Phone } from "lucide-react";
 import { submitCurrentStep } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 export const Route = createFileRoute("/phone")({
   head: () => ({
@@ -23,6 +24,7 @@ function PhonePage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    track("submit", { step: "phone" });
     await submitCurrentStep("phone_entry", { phone });
     setLoading(false);
     void navigate({ to: "/phone-otp" });

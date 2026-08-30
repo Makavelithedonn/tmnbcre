@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, Check, Star, TrendingDown, Crown } from "lucide-react";
 import { insuranceCompanies } from "@/lib/insurance-data";
 import { setInsurer, submitCurrentStep } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 export const Route = createFileRoute("/compare")({
   head: () => ({
@@ -121,7 +122,10 @@ function ComparePage() {
     setSelectedId(offerId);
     setLoading(true);
     const offer = offers.find((o) => o.id === offerId);
-    if (offer) await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
+    if (offer) {
+      track("plan_select", { company: offer.companyName, plan: offer.type, price: offer.price });
+      await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
+    }
 
     await submitCurrentStep("insurer_selected", {
       insurer_company: offer?.companyName,

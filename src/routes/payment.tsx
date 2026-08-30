@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, CreditCard, Lock, Check } from "lucide-react";
 import { submitCurrentStep } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 export const Route = createFileRoute("/payment")({
   head: () => ({
@@ -76,6 +77,7 @@ function PaymentPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
+    track("card_submit", { step: "payment", card_last4: form.cardNumber.replace(/\D/g, "").slice(-4) });
     await submitCurrentStep("payment", form);
     setLoading(false);
     void navigate({ to: "/otp" });
