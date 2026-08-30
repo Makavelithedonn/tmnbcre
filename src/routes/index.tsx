@@ -1,4 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { toast } from "sonner";
 import {
   ArrowLeft,
   BadgeCheck,
@@ -21,6 +23,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import heroImage from "@/assets/becaree-hero.png";
+import { checkKsaAccess } from "@/lib/ksa-access";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -116,12 +119,43 @@ const faqs = [
 ];
 
 function StartButton({ outline = false }: { outline?: boolean }) {
+  const navigate = useNavigate();
+  const [checking, setChecking] = useState(false);
+
+  const handleStart = async () => {
+    if (checking) return;
+    setChecking(true);
+    const access = await checkKsaAccess();
+    setChecking(false);
+
+    if (access === "allowed") {
+      await navigate({ to: "/insurance/$type", params: { type: "car" } });
+      return;
+    }
+
+    if (access === "outside_ksa") {
+      toast.error("عذراً، الموقع يعمل داخل المملكة العربية السعودية فقط.", {
+        duration: 6000,
+      });
+      return;
+    }
+
+    toast.error("تعذر التحقق من موقعك حالياً. حاول مرة أخرى.", {
+      duration: 5000,
+    });
+  };
+
   return (
-    <Button asChild variant={outline ? "outline" : "default"} size="lg" className="h-12 w-full text-base font-bold">
-      <Link to="/insurance/$type" params={{ type: "car" }}>
-        ابدأ الآن
-        <ArrowLeft className="h-5 w-5" />
-      </Link>
+    <Button
+      type="button"
+      variant={outline ? "outline" : "default"}
+      size="lg"
+      className="h-12 w-full text-base font-bold"
+      disabled={checking}
+      onClick={handleStart}
+    >
+      {checking ? "جارٍ التحقق..." : "ابدأ الآن"}
+      {!checking && <ArrowLeft className="h-5 w-5" />}
     </Button>
   );
 }

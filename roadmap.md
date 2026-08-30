@@ -7,3 +7,4 @@
 - [x] Compare page: added "الأكثر طلباً" label on تكافل الراجحي offers and lowered its prices
 - [x] Registration form: replaced native date picker with easier day/month/year dropdowns
 - [x] Homepage redesigned to match the supplied mobile reference: blue hero, partner strip, three package cards, benefits, and FAQ
+- [x] Homepage start buttons restricted to visitors located in Saudi Arabia, with an Arabic notice for other countries
