@@ -73,6 +73,7 @@ function generateOffers(declaredValue: number): Offer[] {
   insuranceCompanies.forEach((c, i) => {
     const p = COMPANY_PRICING[c.id] ?? { tpl: 420 + (i % 5) * 12, comp: 1600 + (i % 6) * 40, rating: 4 + ((i * 7) % 10) / 10 };
     const round = (n: number) => Math.round(n / 5) * 5;
+    const isPopular = c.name === "تكافل الراجحي";
 
     const tplPrice = round(p.tpl * (0.9 + scale * 0.1));
     offers.push({
@@ -86,6 +87,7 @@ function generateOffers(declaredValue: number): Offer[] {
       deductible: 0,
       rating: p.rating,
       features: TPL_FEATURES[i % TPL_FEATURES.length]!,
+      popular: isPopular,
     });
 
     const compPrice = round(p.comp * scale);
@@ -100,6 +102,7 @@ function generateOffers(declaredValue: number): Offer[] {
       deductible: [500, 750, 1000][i % 3]!,
       rating: p.rating,
       features: COMP_FEATURES[i % COMP_FEATURES.length]!,
+      popular: isPopular,
     });
   });
 
