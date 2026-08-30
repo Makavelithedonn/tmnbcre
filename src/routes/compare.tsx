@@ -19,43 +19,102 @@ export const Route = createFileRoute("/compare")({
 });
 
 type Offer = {
+  id: string;
   companyId: string;
   companyName: string;
   color: string;
+  type: "ضد الغير" | "شامل";
   price: number;
+  oldPrice: number;
+  deductible: number;
   rating: number;
   features: string[];
 };
 
+// Realistic KSA market pricing (SAR / year) for a ~80,000 SAR vehicle.
+const COMPANY_PRICING: Record<string, { tpl: number; comp: number; rating: number }> = {
+  tawuniya: { tpl: 468, comp: 1740, rating: 4.6 },
+  salama: { tpl: 412, comp: 1585, rating: 4.3 },
+  rajhi: { tpl: 439, comp: 1690, rating: 4.7 },
+  walaa: { tpl: 398, comp: 1520, rating: 4.2 },
+  allianz: { tpl: 505, comp: 1875, rating: 4.5 },
+  alrajhi: { tpl: 445, comp: 1715, rating: 4.6 },
+  gulf: { tpl: 425, comp: 1610, rating: 4.1 },
+  brog: { tpl: 389, comp: 1490, rating: 4.0 },
+  drv7: { tpl: 375, comp: 1445, rating: 4.4 },
+  midgulf: { tpl: 458, comp: 1760, rating: 4.2 },
+  yaqoot: { tpl: 369, comp: 1425, rating: 4.3 },
+  wafa: { tpl: 405, comp: 1550, rating: 4.0 },
+  arabia: { tpl: 432, comp: 1655, rating: 4.1 },
+  livva: { tpl: 479, comp: 1805, rating: 4.4 },
+  shield: { tpl: 418, comp: 1595, rating: 4.2 },
+  amana: { tpl: 395, comp: 1505, rating: 4.0 },
+};
+
+const TPL_FEATURES = [
+  ["إصدار فوري", "تغطية الطرف الثالث حتى 10 مليون ريال", "ربط مباشر بنجم", "مطالبات إلكترونية"],
+  ["إصدار فوري", "خدمة 24/7", "تغطية الحوادث خارج المدن", "بدون كشف طبي"],
+  ["إصدار فوري", "خصم 10% للقطاع الحكومي", "تعويض سريع خلال 5 أيام", "ربط مباشر بنجم"],
+];
+
+const COMP_FEATURES = [
+  ["تغطية شاملة للمركبة", "سيارة بديلة 7 أيام", "المساعدة على الطريق مجاناً", "تغطية دول الخليج"],
+  ["تغطية شاملة للمركبة", "إصلاح في الوكالة", "سحب مجاني داخل المدينة", "تغطية السرقة والحريق"],
+  ["تغطية شاملة للمركبة", "سيارة بديلة 10 أيام", "تغطية الكوارث الطبيعية", "خصم عدم المطالبة 20%"],
+];
+
 function generateOffers(declaredValue: number): Offer[] {
-  const base = Math.max(declaredValue || 80000, 80000);
-  return insuranceCompanies.map((c, i) => {
-    const factor = 0.012 + (i % 5) * 0.0008 + (c.id.length % 3) * 0.0005;
-    return {
+  const base = Math.max(declaredValue || 80000, 40000);
+  const scale = base / 80000;
+  const offers: Offer[] = [];
+
+  insuranceCompanies.forEach((c, i) => {
+    const p = COMPANY_PRICING[c.id] ?? { tpl: 420 + (i % 5) * 12, comp: 1600 + (i % 6) * 40, rating: 4 + ((i * 7) % 10) / 10 };
+    const round = (n: number) => Math.round(n / 5) * 5;
+
+    const tplPrice = round(p.tpl * (0.9 + scale * 0.1));
+    offers.push({
+      id: `${c.id}-tpl`,
       companyId: c.id,
       companyName: c.name,
       color: c.color,
-      price: Math.round((base * factor) / 10) * 10,
-      rating: 4 + ((i * 7) % 10) / 10,
-      features: [
-        "إصدار فوري",
-        "ربط مباشر بنجم",
-        i % 2 === 0 ? "وكيل مجاني" : "خصم 10% للقطاع الحكومي",
-        i % 3 === 0 ? "ساعات أخذر مجانية" : "تغطية الإيجار",
-      ],
-    };
+      type: "ضد الغير",
+      price: tplPrice,
+      oldPrice: round(tplPrice * 1.22),
+      deductible: 0,
+      rating: p.rating,
+      features: TPL_FEATURES[i % TPL_FEATURES.length]!,
+    });
+
+    const compPrice = round(p.comp * scale);
+    offers.push({
+      id: `${c.id}-comp`,
+      companyId: c.id,
+      companyName: c.name,
+      color: c.color,
+      type: "شامل",
+      price: compPrice,
+      oldPrice: round(compPrice * 1.18),
+      deductible: [500, 750, 1000][i % 3]!,
+      rating: p.rating,
+      features: COMP_FEATURES[i % COMP_FEATURES.length]!,
+    });
   });
+
+  return offers;
 }
 
 function ComparePage() {
   const navigate = useNavigate();
   const [sort, setSort] = useState<"price" | "rating">("price");
+  const [filter, setFilter] = useState<"all" | "ضد الغير" | "شامل">("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const offers = generateOffers(80000).sort((a, b) =>
-    sort === "price" ? a.price - b.price : b.rating - a.rating,
-  );
+  const offers = generateOffers(80000)
+    .filter((o) => filter === "all" || o.type === filter)
+    .sort((a, b) => (sort === "price" ? a.price - b.price : b.rating - a.rating));
+
 
   const handleSelect = async () => {
     if (!selectedId) return;
