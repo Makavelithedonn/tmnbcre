@@ -142,7 +142,22 @@ function ComparePage() {
           </div>
 
           <div className="mb-4 flex items-center justify-between">
-            <div className="text-sm text-dark-500">{offers.length} عرض متاح</div>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {([
+                ["all", "الكل"],
+                ["ضد الغير", "ضد الغير"],
+                ["شامل", "شامل"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium ${filter === key ? "bg-dark-900 text-white" : "bg-white text-dark-600 ring-1 ring-dark-200"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-dark-500">ترتيب:</span>
               <button
@@ -162,12 +177,13 @@ function ComparePage() {
 
           <div className="space-y-3">
             {offers.map((offer, idx) => {
-              const isSelected = selectedId === offer.companyId;
+              const isSelected = selectedId === offer.id;
               const isBest = idx === 0;
+              const discount = Math.round(((offer.oldPrice - offer.price) / offer.oldPrice) * 100);
               return (
                 <div
-                  key={offer.companyId}
-                  onClick={() => setSelectedId(offer.companyId)}
+                  key={offer.id}
+                  onClick={() => setSelectedId(offer.id)}
                   className={`cursor-pointer rounded-2xl border-2 bg-white p-5 transition-all ${
                     isSelected ? "border-primary-500 shadow-lg" : "border-dark-200 hover:border-primary-300"
                   }`}
@@ -178,8 +194,15 @@ function ComparePage() {
                         {offer.companyName.charAt(0)}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <h3 className="text-lg font-bold text-dark-900">{offer.companyName}</h3>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                              offer.type === "شامل" ? "bg-primary-50 text-primary-700" : "bg-dark-100 text-dark-600"
+                            }`}
+                          >
+                            {offer.type}
+                          </span>
                           {isBest && (
                             <span className="flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700">
                               <Crown className="h-3 w-3" /> الأرخص
@@ -193,13 +216,22 @@ function ComparePage() {
                             ))}
                           </div>
                           <span className="text-xs text-dark-500">{offer.rating.toFixed(1)}</span>
+                          <span className="text-xs text-dark-400">
+                            • التحمل: {offer.deductible === 0 ? "لا يوجد" : `${offer.deductible.toLocaleString()} ريال`}
+                          </span>
                         </div>
                       </div>
                     </div>
                     <div className="text-left">
+                      <div className="text-xs text-dark-400 line-through">{offer.oldPrice.toLocaleString()}</div>
                       <div className="text-2xl font-extrabold text-primary-700">{offer.price.toLocaleString()}</div>
                       <div className="text-sm text-dark-500">ريال / سنوي</div>
+                      <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+                        <TrendingDown className="h-3 w-3" /> وفّر {discount}%
+                      </div>
                     </div>
+                  </div>
+
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
                     {offer.features.map((f) => (
