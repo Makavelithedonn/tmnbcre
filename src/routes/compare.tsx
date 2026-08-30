@@ -37,7 +37,7 @@ type Offer = {
 const COMPANY_PRICING: Record<string, { tpl: number; comp: number; rating: number }> = {
   tawuniya: { tpl: 468, comp: 1740, rating: 4.6 },
   salama: { tpl: 412, comp: 1585, rating: 4.3 },
-  rajhi: { tpl: 439, comp: 1690, rating: 4.7 },
+  rajhi: { tpl: 399, comp: 1590, rating: 4.7 },
   walaa: { tpl: 398, comp: 1520, rating: 4.2 },
   allianz: { tpl: 505, comp: 1875, rating: 4.5 },
   alrajhi: { tpl: 445, comp: 1715, rating: 4.6 },
