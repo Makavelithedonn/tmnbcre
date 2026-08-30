@@ -78,17 +78,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Insurance Operations Dashboard" },
+      { title: "بيكير — تأمين السيارات في السعودية" },
       {
         name: "description",
         content:
-          "Admin operations dashboard for vehicle insurance quote sessions, customers and offers.",
+          "قارن عروض تأمين السيارات من أكثر من 20 شركة تأمين واحصل على وثيقتك فورًا.",
       },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Insurance Operations Dashboard" },
+      { name: "author", content: "BeCaree" },
+      { property: "og:title", content: "بيكير — تأمين السيارات في السعودية" },
       {
         property: "og:description",
-        content: "Monitor live quote sessions and review customer submissions.",
+        content: "قارن عروض تأمين السيارات من أكثر من 20 شركة تأمين واحصل على وثيقتك فورًا.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
