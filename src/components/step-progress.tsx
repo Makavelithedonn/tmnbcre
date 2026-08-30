@@ -42,7 +42,7 @@ export default function StepProgress() {
               الخطوة {stepNumber} من {TOTAL}
             </span>
             <span className="mr-2 hidden text-xs font-semibold text-dark-500 sm:inline md:text-sm">
-              — {steps[idx].label}
+              — {steps[idx]?.label}
             </span>
           </div>
           <div className="flex flex-1 items-center gap-1" dir="ltr" aria-hidden="true">
