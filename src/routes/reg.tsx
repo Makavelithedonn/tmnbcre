@@ -136,7 +136,24 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">تاريخ الميلاد</label>
-                <input value={form.dob} onChange={(e) => update("dob", e.target.value)} type="date" className="input-field" />
+                <div className="grid grid-cols-3 gap-2">
+                  <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="input-field">
+                    <option value="">اليوم</option>
+                    {Array.from({ length: dobYear && dobMonth ? daysInMonth(Number(dobMonth), Number(dobYear)) : 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={String(d)}>{d}</option>
+                    ))}
+                  </select>
+                  <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} className="input-field">
+                    <option value="">الشهر</option>
+                    {MONTHS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
+                  </select>
+                  <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} className="input-field">
+                    <option value="">السنة</option>
+                    {Array.from({ length: 100 }, (_, i) => 2025 - 18 - i).map((y) => (
+                      <option key={y} value={String(y)}>{y}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">المدينة</label>
