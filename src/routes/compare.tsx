@@ -217,6 +217,11 @@ function ComparePage() {
                               <Crown className="h-3 w-3" /> الأرخص
                             </span>
                           )}
+                          {offer.popular && (
+                            <span className="flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                              <Flame className="h-3 w-3" /> الأكثر طلباً
+                            </span>
+                          )}
                         </div>
                         <div className="flex items-center gap-2">
                           <div className="flex">
