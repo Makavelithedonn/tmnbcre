@@ -24,7 +24,6 @@ function RegisterPage() {
     fullName: "",
     nationalId: "",
     phone: "",
-    email: "",
     city: "",
     address: "",
     dob: "",
@@ -32,12 +31,29 @@ function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+  const update = (k: string, v: string) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setFieldErrors((p) => ({ ...p, [k]: "" }));
+  };
+
+  // Saudi national ID starts with 1, Iqama with 2 — always 10 digits.
+  const validateNationalId = (v: string) =>
+    /^[12]\d{9}$/.test(v) ? "" : "رقم الهوية/الإقامة يجب أن يكون 10 أرقام ويبدأ بـ 1 أو 2";
+  // Saudi mobile: 05 followed by 8 digits.
+  const validatePhone = (v: string) =>
+    /^05\d{8}$/.test(v) ? "" : "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const errors: Record<string, string> = {
+      nationalId: validateNationalId(form.nationalId),
+      phone: validatePhone(form.phone),
+    };
+    setFieldErrors(errors);
+    if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
     const res = await submitCurrentStep("customer_info", form);
     if (!res.success) setError(res.error || "حدث خطأ");
@@ -76,15 +92,13 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">الهوية الوطنية / الإقامة</label>
-                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value)} required className="input-field" placeholder="10xxxxxxxxx" inputMode="numeric" maxLength={10} />
+                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, nationalId: form.nationalId ? validateNationalId(form.nationalId) : "" }))} required className="input-field" placeholder="1xxxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["nationalId"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["nationalId"]}</p>}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">رقم الجوال</label>
-                <input value={form.phone} onChange={(e) => update("phone", e.target.value)} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} />
-              </div>
-              <div>
-                <label className="mb-1.5 block text-sm font-medium text-dark-700">البريد الإلكتروني</label>
-                <input value={form.email} onChange={(e) => update("email", e.target.value)} type="email" className="input-field" placeholder="example@mail.com" />
+                <input value={form.phone} onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, phone: form.phone ? validatePhone(form.phone) : "" }))} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["phone"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["phone"]}</p>}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">تاريخ الميلاد</label>
