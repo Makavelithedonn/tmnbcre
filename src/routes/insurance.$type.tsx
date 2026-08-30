@@ -35,12 +35,42 @@ function InsuranceQuotePage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [captcha, setCaptcha] = useState(() => ({
+    a: Math.floor(Math.random() * 9) + 1,
+    b: Math.floor(Math.random() * 9) + 1,
+  }));
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
 
-  const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+  const update = (k: string, v: string) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setFieldErrors((p) => ({ ...p, [k]: "" }));
+  };
+
+  // Saudi national ID starts with 1, Iqama with 2 — always 10 digits.
+  const validateNationalId = (v: string) =>
+    /^[12]\d{9}$/.test(v) ? "" : "رقم الهوية/الإقامة يجب أن يكون 10 أرقام ويبدأ بـ 1 أو 2";
+  const validatePhone = (v: string) =>
+    /^05\d{8}$/.test(v) ? "" : "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام";
+
+  const refreshCaptcha = () => {
+    setCaptcha({ a: Math.floor(Math.random() * 9) + 1, b: Math.floor(Math.random() * 9) + 1 });
+    setCaptchaAnswer("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const errors: Record<string, string> = {
+      nationalId: validateNationalId(form.nationalId),
+      phone: validatePhone(form.phone),
+      captcha: Number(captchaAnswer) === captcha.a + captcha.b ? "" : "الإجابة غير صحيحة",
+    };
+    setFieldErrors(errors);
+    if (Object.values(errors).some(Boolean)) {
+      if (errors["captcha"]) refreshCaptcha();
+      return;
+    }
     setLoading(true);
     const app = await createApplication(type);
     if (!app) {
@@ -57,6 +87,7 @@ function InsuranceQuotePage() {
     setLoading(false);
     void navigate({ to: "/compare" });
   };
+
 
   return (
     <div className="min-h-screen bg-dark-50 pt-16 md:pt-20">
