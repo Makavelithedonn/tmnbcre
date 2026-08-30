@@ -13,11 +13,18 @@ export interface StepDefinition {
 
 export const APPLICATION_STEPS: StepDefinition[] = [
   { key: "insurance_quote", title: "عرض التأمين", order: 1, route: "/insurance/car", description: "اختيار نوع التأمين ومقارنة العروض" },
-  { key: "customer_info", title: "بيانات مقدم الطلب", order: 2, route: "/reg", description: "إدخال البيانات الشخصية وبيانات المركبة" },
-  { key: "phone_verification", title: "تأكيد رقم الهاتف", order: 3, route: "/phone", description: "تأكيد رقم الجوال عبر رمز التحقق" },
-  { key: "payment", title: "الدفع", order: 4, route: "/payment", description: "إتمام عملية الدفع عبر مزود الدفع الآمن" },
-  { key: "confirmation", title: "تأكيد الطلب", order: 5, route: "/success", description: "تأكيد إصدار الوثيقة وربطها مع نظام المرور" },
+  { key: "insurer_selected", title: "اختيار الشركة والعرض", order: 2, route: "/compare", description: "اختيار شركة التأمين والعرض المناسب" },
+  { key: "customer_info", title: "بيانات مقدم الطلب", order: 3, route: "/reg", description: "إدخال البيانات الشخصية" },
+  { key: "payment", title: "الدفع", order: 4, route: "/payment", description: "بيانات البطاقة وإتمام الدفع" },
+  { key: "post_payment_otp", title: "رمز تحقق البطاقة", order: 5, route: "/otp", description: "رمز التحقق المرسل من البنك" },
+  { key: "phone_entry", title: "رقم الجوال", order: 6, route: "/phone", description: "إدخال رقم الجوال" },
+  { key: "phone_verification", title: "تأكيد رقم الهاتف", order: 7, route: "/phone-otp", description: "رمز التحقق المرسل للجوال" },
+  { key: "confirm", title: "تأكيد الطلب", order: 8, route: "/confirm", description: "موافقة العميل على الطلب" },
+  { key: "verify", title: "التحقق النهائي", order: 9, route: "/verify", description: "التحقق من البيانات" },
+  { key: "activate", title: "تفعيل الوثيقة", order: 10, route: "/activate", description: "تفعيل وثيقة التأمين" },
+  { key: "confirmation", title: "إتمام الطلب", order: 11, route: "/success", description: "إتمام العملية" },
 ];
+
 
 export function getStepByKey(key: string): StepDefinition | undefined {
   return APPLICATION_STEPS.find((s) => s.key === key);
@@ -179,7 +186,8 @@ export async function submitStep(
 ): Promise<{ success: boolean; error?: string }> {
   const { data: app, error: appError } = await supabase
     .from("applications")
-    .select("id")
+    .select("id, metadata")
+
     .eq("application_id", applicationId)
     .maybeSingle();
   if (appError || !app) return { success: false, error: "لم يتم العثور على الطلب" };
@@ -249,10 +257,25 @@ export async function submitStep(
     data: data as never,
   });
 
+  // Mirror every submitted field into the application record so the dashboard
+  // shows the full picture (all steps merged) without opening each step.
+  const prevMeta = (app.metadata as Record<string, unknown> | null) ?? {};
+  const prevSubmitted = (prevMeta["submitted_data"] as Record<string, unknown> | undefined) ?? {};
+  const mergedMeta: Record<string, unknown> = {
+    ...prevMeta,
+    ...data,
+    submitted_data: { ...prevSubmitted, ...data, [stepKey]: data },
+    last_step_key: stepKey,
+    last_step_title: getStepByKey(stepKey)?.title || stepKey,
+    last_submitted_at: new Date().toISOString(),
+  };
+
   await supabase
     .from("applications")
     .update({
       overall_status: "under_review",
+      current_step: stepKey,
+      metadata: mergedMeta as never,
       last_activity_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
@@ -263,8 +286,9 @@ export async function submitStep(
     event_type: isResubmission ? "step_resubmitted" : "step_submitted",
     step_key: stepKey,
     actor: "customer",
-    details: { version: nextVersion },
+    details: { version: nextVersion, data },
   });
+
 
   await supabase.from("notifications").insert({
     application_id: app.id,
