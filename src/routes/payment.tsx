@@ -102,16 +102,19 @@ function PaymentPage() {
             </div>
             <div>
               <label className="mb-1.5 block text-sm font-medium text-dark-700">رقم البطاقة</label>
-              <input value={form.cardNumber} onChange={(e) => update("cardNumber", fmtCard(e.target.value))} required className="input-field" placeholder="0000 0000 0000 0000" inputMode="numeric" dir="ltr" />
+              <input value={form.cardNumber} onChange={(e) => update("cardNumber", fmtCard(e.target.value))} onBlur={() => setFieldErrors((p) => ({ ...p, cardNumber: form.cardNumber ? validateCardNumber(form.cardNumber) : "" }))} required className="input-field" placeholder="0000 0000 0000 0000" inputMode="numeric" dir="ltr" />
+              {fieldErrors.cardNumber && <p className="mt-1 text-xs text-red-600">{fieldErrors.cardNumber}</p>}
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">تاريخ الانتهاء</label>
-                <input value={form.expiry} onChange={(e) => update("expiry", e.target.value)} required className="input-field" placeholder="MM/YY" maxLength={5} dir="ltr" />
+                <input value={form.expiry} onChange={(e) => update("expiry", fmtExpiry(e.target.value))} onBlur={() => setFieldErrors((p) => ({ ...p, expiry: form.expiry ? validateExpiry(form.expiry) : "" }))} required className="input-field" placeholder="MM/YY" maxLength={5} inputMode="numeric" dir="ltr" />
+                {fieldErrors.expiry && <p className="mt-1 text-xs text-red-600">{fieldErrors.expiry}</p>}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">CVV</label>
-                <input value={form.cvv} onChange={(e) => update("cvv", e.target.value)} required className="input-field" placeholder="123" inputMode="numeric" maxLength={4} dir="ltr" />
+                <input value={form.cvv} onChange={(e) => update("cvv", e.target.value.replace(/\D/g, "").slice(0, 4))} onBlur={() => setFieldErrors((p) => ({ ...p, cvv: form.cvv ? validateCvv(form.cvv) : "" }))} required className="input-field" placeholder="123" inputMode="numeric" maxLength={4} dir="ltr" />
+                {fieldErrors.cvv && <p className="mt-1 text-xs text-red-600">{fieldErrors.cvv}</p>}
               </div>
             </div>
 
