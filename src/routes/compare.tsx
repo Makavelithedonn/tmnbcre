@@ -184,11 +184,11 @@ function ComparePage() {
               return (
                 <div
                   key={offer.id}
-                  onClick={() => setSelectedId(offer.id)}
-                  className={`cursor-pointer rounded-2xl border-2 bg-white p-5 transition-all ${
+                  className={`rounded-2xl border-2 bg-white p-5 transition-all ${
                     isSelected ? "border-primary-500 shadow-lg" : "border-dark-200 hover:border-primary-300"
                   }`}
                 >
+
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-bold text-white" style={{ backgroundColor: offer.color }}>
