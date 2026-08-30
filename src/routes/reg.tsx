@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowLeft, Check, User, MapPin } from "lucide-react";
 import { saudiCities } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
@@ -19,6 +19,25 @@ export const Route = createFileRoute("/reg")({
   component: RegisterPage,
 });
 
+const MONTHS = [
+  { value: "1", label: "يناير" },
+  { value: "2", label: "فبراير" },
+  { value: "3", label: "مارس" },
+  { value: "4", label: "أبريل" },
+  { value: "5", label: "مايو" },
+  { value: "6", label: "يونيو" },
+  { value: "7", label: "يوليو" },
+  { value: "8", label: "أغسطس" },
+  { value: "9", label: "سبتمبر" },
+  { value: "10", label: "أكتوبر" },
+  { value: "11", label: "نوفمبر" },
+  { value: "12", label: "ديسمبر" },
+];
+
+function daysInMonth(month: number, year: number) {
+  return new Date(year, month, 0).getDate();
+}
+
 function RegisterPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -30,9 +49,22 @@ function RegisterPage() {
     dob: "",
     gender: "male",
   });
+  const [dobDay, setDobDay] = useState("");
+  const [dobMonth, setDobMonth] = useState("");
+  const [dobYear, setDobYear] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (dobDay && dobMonth && dobYear) {
+      const day = dobDay.padStart(2, "0");
+      const month = dobMonth.padStart(2, "0");
+      setForm((p) => ({ ...p, dob: `${dobYear}-${month}-${day}` }));
+    } else {
+      setForm((p) => ({ ...p, dob: "" }));
+    }
+  }, [dobDay, dobMonth, dobYear]);
 
   const update = (k: string, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
@@ -104,7 +136,24 @@ function RegisterPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">تاريخ الميلاد</label>
-                <input value={form.dob} onChange={(e) => update("dob", e.target.value)} type="date" className="input-field" />
+                <div className="grid grid-cols-3 gap-2">
+                  <select value={dobDay} onChange={(e) => setDobDay(e.target.value)} className="input-field">
+                    <option value="">اليوم</option>
+                    {Array.from({ length: dobYear && dobMonth ? daysInMonth(Number(dobMonth), Number(dobYear)) : 31 }, (_, i) => i + 1).map((d) => (
+                      <option key={d} value={String(d)}>{d}</option>
+                    ))}
+                  </select>
+                  <select value={dobMonth} onChange={(e) => setDobMonth(e.target.value)} className="input-field">
+                    <option value="">الشهر</option>
+                    {MONTHS.map((m) => <option key={m.value} value={m.value}>{m.label}</option>)}
+                  </select>
+                  <select value={dobYear} onChange={(e) => setDobYear(e.target.value)} className="input-field">
+                    <option value="">السنة</option>
+                    {Array.from({ length: 100 }, (_, i) => 2025 - 18 - i).map((y) => (
+                      <option key={y} value={String(y)}>{y}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">المدينة</label>

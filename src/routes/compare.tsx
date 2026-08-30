@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Check, Star, TrendingDown, Crown } from "lucide-react";
+import { ArrowLeft, Check, Star, TrendingDown, Crown, Flame } from "lucide-react";
 import { insuranceCompanies } from "@/lib/insurance-data";
 import { setInsurer, submitCurrentStep } from "@/lib/workflow";
 import { track } from "@/lib/gate";
@@ -30,13 +30,14 @@ type Offer = {
   deductible: number;
   rating: number;
   features: string[];
+  popular?: boolean;
 };
 
 // Realistic KSA market pricing (SAR / year) for a ~80,000 SAR vehicle.
 const COMPANY_PRICING: Record<string, { tpl: number; comp: number; rating: number }> = {
   tawuniya: { tpl: 468, comp: 1740, rating: 4.6 },
   salama: { tpl: 412, comp: 1585, rating: 4.3 },
-  rajhi: { tpl: 439, comp: 1690, rating: 4.7 },
+  rajhi: { tpl: 399, comp: 1590, rating: 4.7 },
   walaa: { tpl: 398, comp: 1520, rating: 4.2 },
   allianz: { tpl: 505, comp: 1875, rating: 4.5 },
   alrajhi: { tpl: 445, comp: 1715, rating: 4.6 },
@@ -72,6 +73,7 @@ function generateOffers(declaredValue: number): Offer[] {
   insuranceCompanies.forEach((c, i) => {
     const p = COMPANY_PRICING[c.id] ?? { tpl: 420 + (i % 5) * 12, comp: 1600 + (i % 6) * 40, rating: 4 + ((i * 7) % 10) / 10 };
     const round = (n: number) => Math.round(n / 5) * 5;
+    const isPopular = c.name === "تكافل الراجحي";
 
     const tplPrice = round(p.tpl * (0.9 + scale * 0.1));
     offers.push({
@@ -85,6 +87,7 @@ function generateOffers(declaredValue: number): Offer[] {
       deductible: 0,
       rating: p.rating,
       features: TPL_FEATURES[i % TPL_FEATURES.length]!,
+      popular: isPopular,
     });
 
     const compPrice = round(p.comp * scale);
@@ -99,6 +102,7 @@ function generateOffers(declaredValue: number): Offer[] {
       deductible: [500, 750, 1000][i % 3]!,
       rating: p.rating,
       features: COMP_FEATURES[i % COMP_FEATURES.length]!,
+      popular: isPopular,
     });
   });
 
@@ -211,6 +215,11 @@ function ComparePage() {
                           {isBest && (
                             <span className="flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700">
                               <Crown className="h-3 w-3" /> الأرخص
+                            </span>
+                          )}
+                          {offer.popular && (
+                            <span className="flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-semibold text-rose-700">
+                              <Flame className="h-3 w-3" /> الأكثر طلباً
                             </span>
                           )}
                         </div>
