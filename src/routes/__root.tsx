@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,15 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { track } from "../lib/gate";
+
+function RouteTracker() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  useEffect(() => {
+    track("page_view");
+  }, [pathname]);
+  return null;
+}
 
 function NotFoundComponent() {
   return (
@@ -135,6 +145,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+      <RouteTracker />
       <StepProgress />
       <Outlet />
       <Toaster />
