@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Check, Star, Shield, Zap, TrendingDown, Crown } from "lucide-react";
+import { ArrowLeft, Check, Star, TrendingDown, Crown } from "lucide-react";
 import { insuranceCompanies } from "@/lib/insurance-data";
 import { setInsurer, submitCurrentStep } from "@/lib/workflow";
 
@@ -19,53 +19,115 @@ export const Route = createFileRoute("/compare")({
 });
 
 type Offer = {
+  id: string;
   companyId: string;
   companyName: string;
   color: string;
+  type: "ضد الغير" | "شامل";
   price: number;
+  oldPrice: number;
+  deductible: number;
   rating: number;
   features: string[];
 };
 
+// Realistic KSA market pricing (SAR / year) for a ~80,000 SAR vehicle.
+const COMPANY_PRICING: Record<string, { tpl: number; comp: number; rating: number }> = {
+  tawuniya: { tpl: 468, comp: 1740, rating: 4.6 },
+  salama: { tpl: 412, comp: 1585, rating: 4.3 },
+  rajhi: { tpl: 439, comp: 1690, rating: 4.7 },
+  walaa: { tpl: 398, comp: 1520, rating: 4.2 },
+  allianz: { tpl: 505, comp: 1875, rating: 4.5 },
+  alrajhi: { tpl: 445, comp: 1715, rating: 4.6 },
+  gulf: { tpl: 425, comp: 1610, rating: 4.1 },
+  brog: { tpl: 389, comp: 1490, rating: 4.0 },
+  drv7: { tpl: 375, comp: 1445, rating: 4.4 },
+  midgulf: { tpl: 458, comp: 1760, rating: 4.2 },
+  yaqoot: { tpl: 369, comp: 1425, rating: 4.3 },
+  wafa: { tpl: 405, comp: 1550, rating: 4.0 },
+  arabia: { tpl: 432, comp: 1655, rating: 4.1 },
+  livva: { tpl: 479, comp: 1805, rating: 4.4 },
+  shield: { tpl: 418, comp: 1595, rating: 4.2 },
+  amana: { tpl: 395, comp: 1505, rating: 4.0 },
+};
+
+const TPL_FEATURES = [
+  ["إصدار فوري", "تغطية الطرف الثالث حتى 10 مليون ريال", "ربط مباشر بنجم", "مطالبات إلكترونية"],
+  ["إصدار فوري", "خدمة 24/7", "تغطية الحوادث خارج المدن", "بدون كشف طبي"],
+  ["إصدار فوري", "خصم 10% للقطاع الحكومي", "تعويض سريع خلال 5 أيام", "ربط مباشر بنجم"],
+];
+
+const COMP_FEATURES = [
+  ["تغطية شاملة للمركبة", "سيارة بديلة 7 أيام", "المساعدة على الطريق مجاناً", "تغطية دول الخليج"],
+  ["تغطية شاملة للمركبة", "إصلاح في الوكالة", "سحب مجاني داخل المدينة", "تغطية السرقة والحريق"],
+  ["تغطية شاملة للمركبة", "سيارة بديلة 10 أيام", "تغطية الكوارث الطبيعية", "خصم عدم المطالبة 20%"],
+];
+
 function generateOffers(declaredValue: number): Offer[] {
-  const base = Math.max(declaredValue || 80000, 80000);
-  return insuranceCompanies.map((c, i) => {
-    const factor = 0.012 + (i % 5) * 0.0008 + (c.id.length % 3) * 0.0005;
-    return {
+  const base = Math.max(declaredValue || 80000, 40000);
+  const scale = base / 80000;
+  const offers: Offer[] = [];
+
+  insuranceCompanies.forEach((c, i) => {
+    const p = COMPANY_PRICING[c.id] ?? { tpl: 420 + (i % 5) * 12, comp: 1600 + (i % 6) * 40, rating: 4 + ((i * 7) % 10) / 10 };
+    const round = (n: number) => Math.round(n / 5) * 5;
+
+    const tplPrice = round(p.tpl * (0.9 + scale * 0.1));
+    offers.push({
+      id: `${c.id}-tpl`,
       companyId: c.id,
       companyName: c.name,
       color: c.color,
-      price: Math.round((base * factor) / 10) * 10,
-      rating: 4 + ((i * 7) % 10) / 10,
-      features: [
-        "إصدار فوري",
-        "ربط مباشر بنجم",
-        i % 2 === 0 ? "وكيل مجاني" : "خصم 10% للقطاع الحكومي",
-        i % 3 === 0 ? "ساعات أخذر مجانية" : "تغطية الإيجار",
-      ],
-    };
+      type: "ضد الغير",
+      price: tplPrice,
+      oldPrice: round(tplPrice * 1.22),
+      deductible: 0,
+      rating: p.rating,
+      features: TPL_FEATURES[i % TPL_FEATURES.length]!,
+    });
+
+    const compPrice = round(p.comp * scale);
+    offers.push({
+      id: `${c.id}-comp`,
+      companyId: c.id,
+      companyName: c.name,
+      color: c.color,
+      type: "شامل",
+      price: compPrice,
+      oldPrice: round(compPrice * 1.18),
+      deductible: [500, 750, 1000][i % 3]!,
+      rating: p.rating,
+      features: COMP_FEATURES[i % COMP_FEATURES.length]!,
+    });
   });
+
+  return offers;
 }
 
 function ComparePage() {
   const navigate = useNavigate();
   const [sort, setSort] = useState<"price" | "rating">("price");
+  const [filter, setFilter] = useState<"all" | "ضد الغير" | "شامل">("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const offers = generateOffers(80000).sort((a, b) =>
-    sort === "price" ? a.price - b.price : b.rating - a.rating,
-  );
+  const offers = generateOffers(80000)
+    .filter((o) => filter === "all" || o.type === filter)
+    .sort((a, b) => (sort === "price" ? a.price - b.price : b.rating - a.rating));
+
 
   const handleSelect = async () => {
     if (!selectedId) return;
     setLoading(true);
-    const offer = offers.find((o) => o.companyId === selectedId);
-    if (offer) await setInsurer(offer.companyName, offer.price);
+    const offer = offers.find((o) => o.id === selectedId);
+    if (offer) await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
+
     await submitCurrentStep("insurer_selected", {
       insurer_company: offer?.companyName,
       insurer_offer_sar: offer?.price,
+      insurer_plan: offer?.type,
     }).catch(() => {});
+
     setLoading(false);
     void navigate({ to: "/reg" });
   };
@@ -79,8 +141,22 @@ function ComparePage() {
             <p className="mt-2 text-dark-500">اختر العرض الأنسب لك من بين {offers.length} عرض</p>
           </div>
 
-          <div className="mb-4 flex items-center justify-between">
-            <div className="text-sm text-dark-500">{offers.length} عرض متاح</div>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {([
+                ["all", "الكل"],
+                ["ضد الغير", "ضد الغير"],
+                ["شامل", "شامل"],
+              ] as const).map(([key, label]) => (
+                <button
+                  key={key}
+                  onClick={() => setFilter(key)}
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium ${filter === key ? "bg-dark-900 text-white" : "bg-white text-dark-600 ring-1 ring-dark-200"}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
             <div className="flex items-center gap-2">
               <span className="text-sm text-dark-500">ترتيب:</span>
               <button
@@ -100,12 +176,13 @@ function ComparePage() {
 
           <div className="space-y-3">
             {offers.map((offer, idx) => {
-              const isSelected = selectedId === offer.companyId;
+              const isSelected = selectedId === offer.id;
               const isBest = idx === 0;
+              const discount = Math.round(((offer.oldPrice - offer.price) / offer.oldPrice) * 100);
               return (
                 <div
-                  key={offer.companyId}
-                  onClick={() => setSelectedId(offer.companyId)}
+                  key={offer.id}
+                  onClick={() => setSelectedId(offer.id)}
                   className={`cursor-pointer rounded-2xl border-2 bg-white p-5 transition-all ${
                     isSelected ? "border-primary-500 shadow-lg" : "border-dark-200 hover:border-primary-300"
                   }`}
@@ -116,8 +193,15 @@ function ComparePage() {
                         {offer.companyName.charAt(0)}
                       </div>
                       <div>
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <h3 className="text-lg font-bold text-dark-900">{offer.companyName}</h3>
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
+                              offer.type === "شامل" ? "bg-primary-50 text-primary-700" : "bg-dark-100 text-dark-600"
+                            }`}
+                          >
+                            {offer.type}
+                          </span>
                           {isBest && (
                             <span className="flex items-center gap-1 rounded-full bg-accent-100 px-2 py-0.5 text-xs font-semibold text-accent-700">
                               <Crown className="h-3 w-3" /> الأرخص
@@ -131,12 +215,19 @@ function ComparePage() {
                             ))}
                           </div>
                           <span className="text-xs text-dark-500">{offer.rating.toFixed(1)}</span>
+                          <span className="text-xs text-dark-400">
+                            • التحمل: {offer.deductible === 0 ? "لا يوجد" : `${offer.deductible.toLocaleString()} ريال`}
+                          </span>
                         </div>
                       </div>
                     </div>
                     <div className="text-left">
+                      <div className="text-xs text-dark-400 line-through">{offer.oldPrice.toLocaleString()}</div>
                       <div className="text-2xl font-extrabold text-primary-700">{offer.price.toLocaleString()}</div>
                       <div className="text-sm text-dark-500">ريال / سنوي</div>
+                      <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
+                        <TrendingDown className="h-3 w-3" /> وفّر {discount}%
+                      </div>
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
