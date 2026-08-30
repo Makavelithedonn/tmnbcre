@@ -119,8 +119,9 @@ function ComparePage() {
   const handleSelect = async () => {
     if (!selectedId) return;
     setLoading(true);
-    const offer = offers.find((o) => o.companyId === selectedId);
-    if (offer) await setInsurer(offer.companyName, offer.price);
+    const offer = offers.find((o) => o.id === selectedId);
+    if (offer) await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
+
     await submitCurrentStep("insurer_selected", {
       insurer_company: offer?.companyName,
       insurer_offer_sar: offer?.price,
