@@ -330,3 +330,42 @@ export async function updateCurrentStep(applicationId: string, stepKey: string):
     })
     .eq("id", app.id);
 }
+
+// ── Review polling (dashboard accept / reject) ────────────────
+export type StepDecision = "approved" | "rejected" | "pending";
+
+export async function getStepStatus(stepKey: string): Promise<string | null> {
+  const id = getStoredApplicationId();
+  if (!id) return null;
+  const { data: app } = await supabase
+    .from("applications")
+    .select("id")
+    .eq("application_id", id)
+    .maybeSingle();
+  if (!app) return null;
+  const { data: step } = await supabase
+    .from("application_steps")
+    .select("status")
+    .eq("application_id", app.id)
+    .eq("step_key", stepKey)
+    .maybeSingle();
+  return step?.status ?? null;
+}
+
+/**
+ * Polls a step until an operator approves or rejects it in the dashboard.
+ * Resolves "pending" only if the wait is aborted.
+ */
+export async function waitForStepDecision(
+  stepKey: string,
+  options: { intervalMs?: number; signal?: { aborted: boolean } } = {},
+): Promise<StepDecision> {
+  const interval = options.intervalMs ?? 3000;
+  for (;;) {
+    if (options.signal?.aborted) return "pending";
+    const status = await getStepStatus(stepKey);
+    if (status === "approved" || status === "completed") return "approved";
+    if (status === "rejected" || status === "changes_requested") return "rejected";
+    await new Promise((r) => setTimeout(r, interval));
+  }
+}
