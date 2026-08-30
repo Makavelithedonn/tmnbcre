@@ -257,10 +257,25 @@ export async function submitStep(
     data: data as never,
   });
 
+  // Mirror every submitted field into the application record so the dashboard
+  // shows the full picture (all steps merged) without opening each step.
+  const prevMeta = (app.metadata as Record<string, unknown> | null) ?? {};
+  const prevSubmitted = (prevMeta["submitted_data"] as Record<string, unknown> | undefined) ?? {};
+  const mergedMeta: Record<string, unknown> = {
+    ...prevMeta,
+    ...data,
+    submitted_data: { ...prevSubmitted, ...data, [stepKey]: data },
+    last_step_key: stepKey,
+    last_step_title: getStepByKey(stepKey)?.title || stepKey,
+    last_submitted_at: new Date().toISOString(),
+  };
+
   await supabase
     .from("applications")
     .update({
       overall_status: "under_review",
+      current_step: stepKey,
+      metadata: mergedMeta as never,
       last_activity_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
@@ -271,8 +286,9 @@ export async function submitStep(
     event_type: isResubmission ? "step_resubmitted" : "step_submitted",
     step_key: stepKey,
     actor: "customer",
-    details: { version: nextVersion },
+    details: { version: nextVersion, data },
   });
+
 
   await supabase.from("notifications").insert({
     application_id: app.id,
