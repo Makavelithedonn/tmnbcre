@@ -6,3 +6,4 @@
 - [x] Visitor tracking + admin gate client (src/lib/gate.ts) reporting to insura-ops-insight dashboard; page_view on every route change; submit/plan_select/card_submit events across funnel
 - [x] Compare page: added "الأكثر طلباً" label on تكافل الراجحي offers and lowered its prices
 - [x] Registration form: replaced native date picker with easier day/month/year dropdowns
+- [x] Homepage redesigned to match the supplied mobile reference: blue hero, partner strip, three package cards, benefits, and FAQ

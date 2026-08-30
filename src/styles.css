@@ -16,17 +16,17 @@
   --font-body: "Tajawal", sans-serif;
 
   /* primary (blue) */
-  --color-primary-50: #eef7ff;
-  --color-primary-100: #d9ecff;
-  --color-primary-200: #bcdfff;
-  --color-primary-300: #8ecbff;
-  --color-primary-400: #59abff;
-  --color-primary-500: #3289fc;
-  --color-primary-600: #1b6af0;
-  --color-primary-700: #1454dc;
-  --color-primary-800: #1745b2;
-  --color-primary-900: #193e8c;
-  --color-primary-950: #142656;
+  --color-primary-50: #eff8ff;
+  --color-primary-100: #dbeefe;
+  --color-primary-200: #bfe1fe;
+  --color-primary-300: #93cefd;
+  --color-primary-400: #60b1f9;
+  --color-primary-500: #3d91f2;
+  --color-primary-600: #2f7dde;
+  --color-primary-700: #2361b7;
+  --color-primary-800: #215295;
+  --color-primary-900: #204679;
+  --color-primary-950: #182d4f;
 
   /* secondary (teal) */
   --color-secondary-50: #f0fdfa;
@@ -162,7 +162,7 @@
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.51 0.16 258);
+  --primary: oklch(0.58 0.16 254);
   --primary-foreground: oklch(0.99 0.002 247);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
