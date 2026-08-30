@@ -30,6 +30,7 @@ type Offer = {
   deductible: number;
   rating: number;
   features: string[];
+  popular?: boolean;
 };
 
 // Realistic KSA market pricing (SAR / year) for a ~80,000 SAR vehicle.
