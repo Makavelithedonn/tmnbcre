@@ -141,7 +141,6 @@ function ComparePage() {
             <p className="mt-2 text-dark-500">اختر العرض الأنسب لك من بين {offers.length} عرض</p>
           </div>
 
-          <div className="mb-4 flex items-center justify-between">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2">
               {([
