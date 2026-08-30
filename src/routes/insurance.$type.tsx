@@ -35,12 +35,42 @@ function InsuranceQuotePage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [captcha, setCaptcha] = useState(() => ({
+    a: Math.floor(Math.random() * 9) + 1,
+    b: Math.floor(Math.random() * 9) + 1,
+  }));
+  const [captchaAnswer, setCaptchaAnswer] = useState("");
 
-  const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+  const update = (k: string, v: string) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setFieldErrors((p) => ({ ...p, [k]: "" }));
+  };
+
+  // Saudi national ID starts with 1, Iqama with 2 — always 10 digits.
+  const validateNationalId = (v: string) =>
+    /^[12]\d{9}$/.test(v) ? "" : "رقم الهوية/الإقامة يجب أن يكون 10 أرقام ويبدأ بـ 1 أو 2";
+  const validatePhone = (v: string) =>
+    /^05\d{8}$/.test(v) ? "" : "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام";
+
+  const refreshCaptcha = () => {
+    setCaptcha({ a: Math.floor(Math.random() * 9) + 1, b: Math.floor(Math.random() * 9) + 1 });
+    setCaptchaAnswer("");
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const errors: Record<string, string> = {
+      nationalId: validateNationalId(form.nationalId),
+      phone: validatePhone(form.phone),
+      captcha: Number(captchaAnswer) === captcha.a + captcha.b ? "" : "الإجابة غير صحيحة",
+    };
+    setFieldErrors(errors);
+    if (Object.values(errors).some(Boolean)) {
+      if (errors["captcha"]) refreshCaptcha();
+      return;
+    }
     setLoading(true);
     const app = await createApplication(type);
     if (!app) {
@@ -57,6 +87,7 @@ function InsuranceQuotePage() {
     setLoading(false);
     void navigate({ to: "/compare" });
   };
+
 
   return (
     <div className="min-h-screen bg-dark-50 pt-16 md:pt-20">
@@ -85,12 +116,15 @@ function InsuranceQuotePage() {
             <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">الهوية الوطنية / الإقامة</label>
-                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value)} required className="input-field" placeholder="10xxxxxxxxx" inputMode="numeric" maxLength={10} />
+                <input value={form.nationalId} onChange={(e) => update("nationalId", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, nationalId: form.nationalId ? validateNationalId(form.nationalId) : "" }))} required className="input-field" placeholder="1xxxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["nationalId"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["nationalId"]}</p>}
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">رقم الجوال</label>
-                <input value={form.phone} onChange={(e) => update("phone", e.target.value)} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} />
+                <input value={form.phone} onChange={(e) => update("phone", e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setFieldErrors((p) => ({ ...p, phone: form.phone ? validatePhone(form.phone) : "" }))} required className="input-field" placeholder="05xxxxxxxx" inputMode="numeric" maxLength={10} dir="ltr" />
+                {fieldErrors["phone"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["phone"]}</p>}
               </div>
+
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-dark-700">ماركة السيارة</label>
                 <select value={form.carBrand} onChange={(e) => update("carBrand", e.target.value)} required className="input-field">
@@ -129,9 +163,35 @@ function InsuranceQuotePage() {
               </div>
             </div>
 
+            <div className="rounded-xl bg-dark-50 px-4 py-3 ring-1 ring-dark-200">
+              <label className="mb-1.5 block text-sm font-medium text-dark-700">تحقق أنك لست روبوت</label>
+              <div className="flex items-center gap-3">
+                <span className="select-none rounded-lg bg-white px-3 py-2 text-base font-bold tracking-widest text-dark-800 ring-1 ring-dark-200" dir="ltr">
+                  {captcha.a} + {captcha.b} = ?
+                </span>
+                <input
+                  value={captchaAnswer}
+                  onChange={(e) => {
+                    setCaptchaAnswer(e.target.value.replace(/\D/g, "").slice(0, 2));
+                    setFieldErrors((p) => ({ ...p, captcha: "" }));
+                  }}
+                  required
+                  className="input-field max-w-[7rem]"
+                  inputMode="numeric"
+                  placeholder="الإجابة"
+                  dir="ltr"
+                />
+                <button type="button" onClick={refreshCaptcha} className="text-sm font-medium text-primary-600 underline">
+                  تحديث
+                </button>
+              </div>
+              {fieldErrors["captcha"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["captcha"]}</p>}
+            </div>
+
             {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
 
             <div className="flex items-center gap-3 rounded-xl bg-primary-50 px-4 py-3 text-sm text-primary-700">
+
               <Shield className="h-5 w-5" />
               بياناتك آمنة ومشفرة، ولن تُستخدم إلا لغرض التسعير
             </div>

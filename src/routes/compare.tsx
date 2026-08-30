@@ -116,10 +116,11 @@ function ComparePage() {
     .sort((a, b) => (sort === "price" ? a.price - b.price : b.rating - a.rating));
 
 
-  const handleSelect = async () => {
-    if (!selectedId) return;
+  const handleSelect = async (offerId: string) => {
+    if (loading) return;
+    setSelectedId(offerId);
     setLoading(true);
-    const offer = offers.find((o) => o.id === selectedId);
+    const offer = offers.find((o) => o.id === offerId);
     if (offer) await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
 
     await submitCurrentStep("insurer_selected", {
@@ -131,6 +132,7 @@ function ComparePage() {
     setLoading(false);
     void navigate({ to: "/reg" });
   };
+
 
   return (
     <div className="min-h-screen bg-dark-50 pt-16 md:pt-20">
@@ -182,11 +184,11 @@ function ComparePage() {
               return (
                 <div
                   key={offer.id}
-                  onClick={() => setSelectedId(offer.id)}
-                  className={`cursor-pointer rounded-2xl border-2 bg-white p-5 transition-all ${
+                  className={`rounded-2xl border-2 bg-white p-5 transition-all ${
                     isSelected ? "border-primary-500 shadow-lg" : "border-dark-200 hover:border-primary-300"
                   }`}
                 >
+
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl text-xl font-bold text-white" style={{ backgroundColor: offer.color }}>
@@ -228,6 +230,14 @@ function ComparePage() {
                       <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
                         <TrendingDown className="h-3 w-3" /> وفّر {discount}%
                       </div>
+                      <button
+                        onClick={() => void handleSelect(offer.id)}
+                        disabled={loading}
+                        className="btn-primary mt-3 w-full whitespace-nowrap px-4 py-2 text-sm disabled:opacity-60"
+                      >
+                        {isSelected && loading ? "جارٍ المتابعة..." : "اختيار ومتابعة"}
+                        <ArrowLeft className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -238,25 +248,11 @@ function ComparePage() {
                       </span>
                     ))}
                   </div>
-                  {isSelected && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg bg-primary-50 px-3 py-2 text-sm font-semibold text-primary-700">
-                      <Check className="h-4 w-4" />
-                      تم اختيار هذا العرض
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
 
-          <button
-            onClick={handleSelect}
-            disabled={!selectedId || loading}
-            className="btn-primary mt-6 w-full disabled:opacity-50"
-          >
-            {loading ? "جارٍ المتابعة..." : "متابعة التسجيل"}
-            <ArrowLeft className="h-5 w-5" />
-          </button>
         </div>
       </div>
     </div>
