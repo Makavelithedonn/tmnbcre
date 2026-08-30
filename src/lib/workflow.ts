@@ -186,7 +186,8 @@ export async function submitStep(
 ): Promise<{ success: boolean; error?: string }> {
   const { data: app, error: appError } = await supabase
     .from("applications")
-    .select("id")
+    .select("id, metadata")
+
     .eq("application_id", applicationId)
     .maybeSingle();
   if (appError || !app) return { success: false, error: "لم يتم العثور على الطلب" };
