@@ -24,7 +24,6 @@ function RegisterPage() {
     fullName: "",
     nationalId: "",
     phone: "",
-    email: "",
     city: "",
     address: "",
     dob: "",
@@ -32,12 +31,29 @@ function RegisterPage() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  const update = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
+  const update = (k: string, v: string) => {
+    setForm((p) => ({ ...p, [k]: v }));
+    setFieldErrors((p) => ({ ...p, [k]: "" }));
+  };
+
+  // Saudi national ID starts with 1, Iqama with 2 — always 10 digits.
+  const validateNationalId = (v: string) =>
+    /^[12]\d{9}$/.test(v) ? "" : "رقم الهوية/الإقامة يجب أن يكون 10 أرقام ويبدأ بـ 1 أو 2";
+  // Saudi mobile: 05 followed by 8 digits.
+  const validatePhone = (v: string) =>
+    /^05\d{8}$/.test(v) ? "" : "رقم الجوال يجب أن يبدأ بـ 05 ويتكون من 10 أرقام";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    const errors: Record<string, string> = {
+      nationalId: validateNationalId(form.nationalId),
+      phone: validatePhone(form.phone),
+    };
+    setFieldErrors(errors);
+    if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
     const res = await submitCurrentStep("customer_info", form);
     if (!res.success) setError(res.error || "حدث خطأ");
