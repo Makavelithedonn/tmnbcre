@@ -1,5 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Car,
   HeartPulse,
@@ -30,7 +29,6 @@ import {
   insuranceCompanies,
   testimonials,
   features,
-  carBrands,
 } from "@/lib/insurance-data";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -66,15 +64,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const navigate = useNavigate();
-  const [selectedBrand, setSelectedBrand] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    void navigate({ to: "/insurance/$type", params: { type: "car" } });
-  };
-
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
@@ -91,122 +80,41 @@ function HomePage() {
           </div>
 
           <div className="container-x relative z-10 py-16 md:py-24">
-            <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-              <div className="space-y-6 animate-slide-up">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
-                  <Zap className="h-4 w-4 text-accent-400" />
-                  المنصة الأذكى لمقارنة تأمين السيارات
-                </div>
-                <h1 className="text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl text-balance">
-                  اشتر تأمين ضد الغير / شامل في
-                  <span className="block bg-gradient-to-l from-accent-400 to-secondary-400 bg-clip-text text-transparent">
-                    دقائق
-                  </span>
-                </h1>
-                <p className="max-w-lg text-lg leading-relaxed text-primary-100">
-                  المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع
-                  إصدار فوري وربط مباشر بنجم.
-                </p>
-                <div className="flex flex-wrap gap-4">
-                  <Link to="/insurance/$type" params={{ type: "car" }} className="btn-accent">
-                    احصل على عرض سعر
-                    <ArrowLeft className="h-5 w-5" />
-                  </Link>
-                </div>
-                <div className="flex flex-wrap gap-6 pt-4">
-                  {[
-                    { icon: Zap, text: "إصدار فوري" },
-                    { icon: TrendingDown, text: "أسعار أقل" },
-                    { icon: Shield, text: "معتمد من هيئة التأمين" },
-                  ].map((item) => (
-                    <div
-                      key={item.text}
-                      className="flex items-center gap-2 text-sm text-primary-100"
-                    >
-                      <item.icon className="h-5 w-5 text-accent-400" />
-                      {item.text}
-                    </div>
-                  ))}
-                </div>
+            <div className="mx-auto max-w-3xl space-y-6 animate-slide-up text-center">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-medium text-white backdrop-blur-sm">
+                <Zap className="h-4 w-4 text-accent-400" />
+                المنصة الأذكى لمقارنة تأمين السيارات
               </div>
-
-              {/* Quick Quote Form */}
-              <div className="animate-scale-in">
-                <div className="rounded-3xl bg-white p-6 shadow-2xl md:p-8">
-                  <h3 className="mb-2 text-xl font-bold text-dark-900">
-                    احصل على عرض سعر فوري
-                  </h3>
-                  <p className="mb-6 text-sm text-dark-500">أدخل بيانات مركبتك للمقارنة</p>
-                  <form onSubmit={handleSearch} className="space-y-4">
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-dark-700">
-                        ماركة السيارة
-                      </label>
-                      <select
-                        value={selectedBrand}
-                        onChange={(e) => setSelectedBrand(e.target.value)}
-                        className="input-field"
-                      >
-                        <option value="">اختر الماركة</option>
-                        {carBrands.map((brand) => (
-                          <option key={brand} value={brand}>
-                            {brand}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-dark-700">
-                        سنة الموديل
-                      </label>
-                      <select
-                        value={selectedYear}
-                        onChange={(e) => setSelectedYear(e.target.value)}
-                        className="input-field"
-                      >
-                        <option value="">اختر السنة</option>
-                        {Array.from({ length: 15 }, (_, i) => 2024 - i).map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="mb-1.5 block text-sm font-medium text-dark-700">
-                        نوع التأمين
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <label className="flex cursor-pointer items-center justify-center rounded-xl border-2 border-primary-200 bg-primary-50 px-4 py-3 text-sm font-semibold text-primary-700 transition-all hover:border-primary-400">
-                          <input
-                            type="radio"
-                            name="insuranceType"
-                            value="شامل"
-                            defaultChecked
-                            className="sr-only"
-                          />
-                          تأمين شامل
-                        </label>
-                        <label className="flex cursor-pointer items-center justify-center rounded-xl border-2 border-dark-200 px-4 py-3 text-sm font-semibold text-dark-600 transition-all hover:border-primary-300">
-                          <input
-                            type="radio"
-                            name="insuranceType"
-                            value="ضد الغير"
-                            className="sr-only"
-                          />
-                          ضد الغير
-                        </label>
-                      </div>
-                    </div>
-                    <button type="submit" className="btn-primary w-full">
-                      إظهار العروض
-                      <ArrowLeft className="h-5 w-5" />
-                    </button>
-                    <p className="text-center text-xs text-dark-400">
-                      مقارنة مجانية · بدون التزام · نتائج فورية
-                    </p>
-                  </form>
-                </div>
+              <h1 className="text-4xl font-extrabold leading-tight text-white md:text-5xl lg:text-6xl text-balance">
+                اشتر تأمين ضد الغير / شامل في
+                <span className="block bg-gradient-to-l from-accent-400 to-secondary-400 bg-clip-text text-transparent">
+                  دقائق
+                </span>
+              </h1>
+              <p className="mx-auto max-w-xl text-lg leading-relaxed text-primary-100">
+                المنصة الأذكى لمقارنة عروض أكثر من 20 شركة تأمين. احصل على أرخص تأمين سيارات مع
+                إصدار فوري وربط مباشر بنجم.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
+                <Link to="/insurance/$type" params={{ type: "car" }} className="btn-accent">
+                  ابدأ الآن
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+              </div>
+              <div className="flex flex-wrap justify-center gap-6 pt-4">
+                {[
+                  { icon: Zap, text: "إصدار فوري" },
+                  { icon: TrendingDown, text: "أسعار أقل" },
+                  { icon: Shield, text: "معتمد من هيئة التأمين" },
+                ].map((item) => (
+                  <div
+                    key={item.text}
+                    className="flex items-center gap-2 text-sm text-primary-100"
+                  >
+                    <item.icon className="h-5 w-5 text-accent-400" />
+                    {item.text}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
