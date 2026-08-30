@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, Check, Shield, Zap, Star, Car } from "lucide-react";
 import { insuranceTypes, insuranceCompanies, carBrands, saudiCities } from "@/lib/insurance-data";
 import { createApplication, submitStep } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 export const Route = createFileRoute("/insurance/$type")({
   head: ({ params }) => ({
@@ -72,6 +73,7 @@ function InsuranceQuotePage() {
       return;
     }
     setLoading(true);
+    track("submit", { step: "quote" });
     const app = await createApplication(type);
     if (!app) {
       setError("حدث خطأ أثناء إنشاء الطلب، حاول مرة أخرى");

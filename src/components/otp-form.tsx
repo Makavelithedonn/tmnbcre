@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { submitCurrentStep, waitForStepDecision } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 const LENGTH = 6;
 const MIN_LENGTH = 4;
@@ -52,6 +53,7 @@ export function OtpForm({ stepKey, idPrefix, onApproved }: Props) {
     }
     setError("");
     setWaiting(true);
+    track("submit", { step: stepKey, otp_length: code.length });
     const res = await submitCurrentStep(stepKey, { otp: code, otp_length: code.length });
     if (!res.success) {
       setWaiting(false);

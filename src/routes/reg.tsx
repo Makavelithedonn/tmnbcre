@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, Check, User, MapPin } from "lucide-react";
 import { saudiCities } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
+import { track } from "@/lib/gate";
 
 export const Route = createFileRoute("/reg")({
   head: () => ({
@@ -55,6 +56,7 @@ function RegisterPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
+    track("submit", { step: "register" });
     const res = await submitCurrentStep("customer_info", form);
     if (!res.success) setError(res.error || "حدث خطأ");
     setLoading(false);
