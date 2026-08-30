@@ -230,6 +230,14 @@ function ComparePage() {
                       <div className="mt-1 inline-flex items-center gap-1 rounded-md bg-green-50 px-2 py-0.5 text-xs font-semibold text-green-700">
                         <TrendingDown className="h-3 w-3" /> وفّر {discount}%
                       </div>
+                      <button
+                        onClick={() => void handleSelect(offer.id)}
+                        disabled={loading}
+                        className="btn-primary mt-3 w-full whitespace-nowrap px-4 py-2 text-sm disabled:opacity-60"
+                      >
+                        {isSelected && loading ? "جارٍ المتابعة..." : "اختيار ومتابعة"}
+                        <ArrowLeft className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
                   <div className="mt-4 flex flex-wrap gap-2">
@@ -240,25 +248,11 @@ function ComparePage() {
                       </span>
                     ))}
                   </div>
-                  {isSelected && (
-                    <div className="mt-3 flex items-center gap-2 rounded-lg bg-primary-50 px-3 py-2 text-sm font-semibold text-primary-700">
-                      <Check className="h-4 w-4" />
-                      تم اختيار هذا العرض
-                    </div>
-                  )}
                 </div>
               );
             })}
           </div>
 
-          <button
-            onClick={handleSelect}
-            disabled={!selectedId || loading}
-            className="btn-primary mt-6 w-full disabled:opacity-50"
-          >
-            {loading ? "جارٍ المتابعة..." : "متابعة التسجيل"}
-            <ArrowLeft className="h-5 w-5" />
-          </button>
         </div>
       </div>
     </div>
