@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, Check, Star, Shield, Zap, TrendingDown, Crown } from "lucide-react";
+import { ArrowLeft, Check, Star, TrendingDown, Crown } from "lucide-react";
 import { insuranceCompanies } from "@/lib/insurance-data";
 import { setInsurer, submitCurrentStep } from "@/lib/workflow";
 
