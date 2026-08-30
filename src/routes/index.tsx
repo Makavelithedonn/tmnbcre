@@ -1,5 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   Car,
   HeartPulse,
@@ -30,7 +29,6 @@ import {
   insuranceCompanies,
   testimonials,
   features,
-  carBrands,
 } from "@/lib/insurance-data";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -66,15 +64,6 @@ export const Route = createFileRoute("/")({
 });
 
 function HomePage() {
-  const navigate = useNavigate();
-  const [selectedBrand, setSelectedBrand] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    void navigate({ to: "/insurance/$type", params: { type: "car" } });
-  };
-
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
