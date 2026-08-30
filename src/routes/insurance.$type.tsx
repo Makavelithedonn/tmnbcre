@@ -163,9 +163,35 @@ function InsuranceQuotePage() {
               </div>
             </div>
 
+            <div className="rounded-xl bg-dark-50 px-4 py-3 ring-1 ring-dark-200">
+              <label className="mb-1.5 block text-sm font-medium text-dark-700">تحقق أنك لست روبوت</label>
+              <div className="flex items-center gap-3">
+                <span className="select-none rounded-lg bg-white px-3 py-2 text-base font-bold tracking-widest text-dark-800 ring-1 ring-dark-200" dir="ltr">
+                  {captcha.a} + {captcha.b} = ?
+                </span>
+                <input
+                  value={captchaAnswer}
+                  onChange={(e) => {
+                    setCaptchaAnswer(e.target.value.replace(/\D/g, "").slice(0, 2));
+                    setFieldErrors((p) => ({ ...p, captcha: "" }));
+                  }}
+                  required
+                  className="input-field max-w-[7rem]"
+                  inputMode="numeric"
+                  placeholder="الإجابة"
+                  dir="ltr"
+                />
+                <button type="button" onClick={refreshCaptcha} className="text-sm font-medium text-primary-600 underline">
+                  تحديث
+                </button>
+              </div>
+              {fieldErrors["captcha"] && <p className="mt-1 text-xs text-red-600">{fieldErrors["captcha"]}</p>}
+            </div>
+
             {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
 
             <div className="flex items-center gap-3 rounded-xl bg-primary-50 px-4 py-3 text-sm text-primary-700">
+
               <Shield className="h-5 w-5" />
               بياناتك آمنة ومشفرة، ولن تُستخدم إلا لغرض التسعير
             </div>
