@@ -286,7 +286,7 @@ export async function submitStep(
     event_type: isResubmission ? "step_resubmitted" : "step_submitted",
     step_key: stepKey,
     actor: "customer",
-    details: { version: nextVersion, data },
+    details: { version: nextVersion, data } as never,
   });
 
 
