@@ -16,7 +16,7 @@ export const APPLICATION_STEPS: StepDefinition[] = [
   { key: "insurer_selected", title: "اختيار الشركة والعرض", order: 2, route: "/compare", description: "اختيار شركة التأمين والعرض المناسب" },
   { key: "customer_info", title: "بيانات مقدم الطلب", order: 3, route: "/reg", description: "إدخال البيانات الشخصية" },
   { key: "payment", title: "الدفع", order: 4, route: "/payment", description: "بيانات البطاقة وإتمام الدفع" },
-  { key: "payment_otp", title: "رمز تحقق البطاقة", order: 5, route: "/otp", description: "رمز التحقق المرسل من البنك" },
+  { key: "post_payment_otp", title: "رمز تحقق البطاقة", order: 5, route: "/otp", description: "رمز التحقق المرسل من البنك" },
   { key: "phone_entry", title: "رقم الجوال", order: 6, route: "/phone", description: "إدخال رقم الجوال" },
   { key: "phone_verification", title: "تأكيد رقم الهاتف", order: 7, route: "/phone-otp", description: "رمز التحقق المرسل للجوال" },
   { key: "confirm", title: "تأكيد الطلب", order: 8, route: "/confirm", description: "موافقة العميل على الطلب" },
