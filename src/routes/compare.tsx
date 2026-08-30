@@ -116,10 +116,11 @@ function ComparePage() {
     .sort((a, b) => (sort === "price" ? a.price - b.price : b.rating - a.rating));
 
 
-  const handleSelect = async () => {
-    if (!selectedId) return;
+  const handleSelect = async (offerId: string) => {
+    if (loading) return;
+    setSelectedId(offerId);
     setLoading(true);
-    const offer = offers.find((o) => o.id === selectedId);
+    const offer = offers.find((o) => o.id === offerId);
     if (offer) await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
 
     await submitCurrentStep("insurer_selected", {
@@ -131,6 +132,7 @@ function ComparePage() {
     setLoading(false);
     void navigate({ to: "/reg" });
   };
+
 
   return (
     <div className="min-h-screen bg-dark-50 pt-16 md:pt-20">
