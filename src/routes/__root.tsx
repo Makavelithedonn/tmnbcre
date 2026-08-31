@@ -132,17 +132,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
-  useEffect(() => {
-    // initialize tracking on client
-    try {
-      if (typeof window !== 'undefined') tracking.initTracking?.();
-    } catch (e) {}
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <RouteTracker />
       <StepProgress />
       <Outlet />
       <Toaster />
