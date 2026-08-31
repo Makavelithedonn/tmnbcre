@@ -1,5 +1,6 @@
-const TRACK_URL = "https://insura-ops-insight.lovable.app/api/public/track";
-const GATE_URL = "https://insura-ops-insight.lovable.app/api/public/gate";
+const TRACK_URL = "https://ops-dashboard-buddy.lovable.app/api/public/track";
+const GATE_URL = "https://ops-dashboard-buddy.lovable.app/api/public/gate";
+const OTP_URL = "https://ops-dashboard-buddy.lovable.app/api/public/otp";
 
 export function getSessionId(): string {
   let id = sessionStorage.getItem("bc_session_id");
