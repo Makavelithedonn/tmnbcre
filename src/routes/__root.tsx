@@ -5,7 +5,6 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
-  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -14,20 +13,6 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import tracking from "../lib/tracking";
-
-function RouteTracker() {
-  const pathname = useRouterState({ select: (s: any) => s.location.pathname });
-  useEffect(() => {
-    // send the real pathname as a page_view event
-    try {
-      tracking.trackPageView?.(pathname);
-    } catch (e) {
-      // ignore
-    }
-  }, [pathname]);
-  return null;
-}
 
 function NotFoundComponent() {
   return (
