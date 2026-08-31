@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Check, User, MapPin } from "lucide-react";
+import { ArrowLeft, Check, User } from "lucide-react";
 import { saudiCities } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
 import { track } from "@/lib/gate";
@@ -45,7 +45,6 @@ function RegisterPage() {
     nationalId: "",
     phone: "",
     city: "",
-    address: "",
     dob: "",
     gender: "male",
   });
@@ -168,13 +167,6 @@ function RegisterPage() {
                   <option value="male">ذكر</option>
                   <option value="female">أنثى</option>
                 </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="mb-1.5 block text-sm font-medium text-dark-700">العنوان</label>
-                <div className="relative">
-                  <MapPin className="pointer-events-none absolute right-3 top-3 h-5 w-5 text-dark-400" />
-                  <input value={form.address} onChange={(e) => update("address", e.target.value)} className="input-field !pr-10" placeholder="الحي، الشارع" />
-                </div>
               </div>
             </div>
 
