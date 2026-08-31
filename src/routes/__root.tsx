@@ -14,12 +14,19 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { track } from "../lib/gate";
+-import { track } from "../lib/gate";
++import tracking from "../lib/tracking";
 
 function RouteTracker() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   useEffect(() => {
-    track("page_view");
+-    track("page_view");
++    // send the real pathname as a page_view event
++    try {
++      tracking.trackPageView?.(pathname);
++    } catch (e) {
++      // ignore
++    }
   }, [pathname]);
   return null;
 }
@@ -142,6 +149,13 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
++  useEffect(() => {
++    // initialize tracking on client
++    try {
++      if (typeof window !== 'undefined') tracking.initTracking?.();
++    } catch (e) {}
++  }, []);
++
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
