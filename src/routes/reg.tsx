@@ -87,11 +87,23 @@ function RegisterPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
+    
+    console.log("[reg] Form submission started with data:", form);
+    console.log("[reg] Calling track() and submitCurrentStep()");
+    
     track("submit", { step: "register" });
     const res = await submitCurrentStep("customer_info", form);
+    
+    console.log("[reg] submitCurrentStep response:", res);
+    
     if (!res.success) setError(res.error || "حدث خطأ");
     setLoading(false);
-    if (res.success) void navigate({ to: "/payment" });
+    if (res.success) {
+      console.log("[reg] Submission successful, navigating to /payment");
+      void navigate({ to: "/payment" });
+    } else {
+      console.log("[reg] Submission failed with error:", res.error);
+    }
   };
 
   return (

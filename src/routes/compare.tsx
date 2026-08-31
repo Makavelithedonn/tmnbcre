@@ -127,17 +127,25 @@ function ComparePage() {
     setLoading(true);
     const offer = offers.find((o) => o.id === offerId);
     if (offer) {
+      console.log("[compare] Selected offer:", offer);
       track("plan_select", { company: offer.companyName, plan: offer.type, price: offer.price });
       await setInsurer(`${offer.companyName} — ${offer.type}`, offer.price);
+      console.log("[compare] setInsurer completed");
     }
 
-    await submitCurrentStep("insurer_selected", {
+    console.log("[compare] Submitting insurer_selected step with offer:", offer);
+    const stepRes = await submitCurrentStep("insurer_selected", {
       insurer_company: offer?.companyName,
       insurer_offer_sar: offer?.price,
       insurer_plan: offer?.type,
-    }).catch(() => {});
-
+    }).catch((err) => {
+      console.error("[compare] submitCurrentStep failed:", err);
+      return { success: false, error: "فشل حفظ البيانات" };
+    });
+    
+    console.log("[compare] insurer_selected submission result:", stepRes);
     setLoading(false);
+    console.log("[compare] Navigating to /reg");
     void navigate({ to: "/reg" });
   };
 
