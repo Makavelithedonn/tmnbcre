@@ -184,6 +184,16 @@ export async function submitStep(
   stepKey: string,
   data: Record<string, unknown>
 ): Promise<{ success: boolean; error?: string }> {
+  console.log("[workflow] submitStep called:", { applicationId, stepKey, data_keys: Object.keys(data), data });
+  
+  // Ensure data is JSON-serializable
+  try {
+    JSON.stringify(data);
+  } catch (e) {
+    console.error("[workflow] submitStep - Data is not JSON-serializable:", e, data);
+    return { success: false, error: "البيانات غير صالحة للحفظ" };
+  }
+  
   const { data: app, error: appError } = await supabase
     .from("applications")
     .select("id, metadata")
@@ -238,7 +248,10 @@ export async function submitStep(
       updated_at: new Date().toISOString(),
     })
     .eq("id", step.id);
-  if (updateError) return { success: false, error: "فشل حفظ البيانات" };
+  if (updateError) {
+    console.error("[workflow] submitStep - Failed to update application_steps:", updateError, { step_id: step.id, data });
+    return { success: false, error: "فشل حفظ البيانات" };
+  }
 
   const { data: versions } = await supabase
     .from("submission_versions")
@@ -255,6 +268,10 @@ export async function submitStep(
     step_key: stepKey,
     version_number: nextVersion,
     data: data as never,
+  }).then(({ error: versionError }) => {
+    if (versionError) {
+      console.error("[workflow] submitStep - Failed to insert submission_versions:", versionError, { data });
+    }
   });
 
   // Mirror every submitted field into the application record so the dashboard
@@ -270,7 +287,7 @@ export async function submitStep(
     last_submitted_at: new Date().toISOString(),
   };
 
-  await supabase
+  const { error: metaUpdateError } = await supabase
     .from("applications")
     .update({
       overall_status: "under_review",
@@ -280,6 +297,11 @@ export async function submitStep(
       updated_at: new Date().toISOString(),
     })
     .eq("id", app.id);
+  
+  if (metaUpdateError) {
+    console.error("[workflow] submitStep - Failed to update applications metadata:", metaUpdateError, { app_id: app.id, metadata: mergedMeta });
+    return { success: false, error: "فشل حفظ البيانات" };
+  }
 
   await supabase.from("application_history").insert({
     application_id: app.id,
@@ -296,8 +318,13 @@ export async function submitStep(
     type: "step_submitted",
     title: "تم إرسال الخطوة",
     message: `تم إرسال "${getStepByKey(stepKey)?.title || stepKey}" للمراجعة.`,
+  }).then(({ error: notifError }) => {
+    if (notifError) {
+      console.error("[workflow] submitStep - Failed to insert notification:", notifError);
+    }
   });
 
+  console.log("[workflow] submitStep completed successfully:", { stepKey, applicationId, mergedMeta });
   return { success: true };
 }
 
