@@ -199,17 +199,8 @@ function RegisterPage() {
             </div>
 
             <div className="card">
-              <label className="mb-2 block text-sm font-medium text-dark-700">
-                رمز التحقق: كم ناتج {captcha.a} + {captcha.b}؟
-              </label>
-              <input
-                value={captchaAnswer}
-                onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, "").slice(0, 2))}
-                className="input-field"
-                placeholder="أدخل الناتج"
-                inputMode="numeric"
-                dir="ltr"
-              />
+              <label className="mb-3 block text-sm font-medium text-dark-700">التحقق الأمني</label>
+              <Turnstile onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
             </div>
 
             {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
