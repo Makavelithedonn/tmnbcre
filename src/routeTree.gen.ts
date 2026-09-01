@@ -14,6 +14,7 @@ import { Route as ActivateRouteImport } from './routes/activate'
 import { Route as CompareRouteImport } from './routes/compare'
 import { Route as ConfirmRouteImport } from './routes/confirm'
 import { Route as OtpRouteImport } from './routes/otp'
+import { Route as OwnerRouteImport } from './routes/owner'
 import { Route as PaymentRouteImport } from './routes/payment'
 import { Route as PhoneRouteImport } from './routes/phone'
 import { Route as PhoneOtpRouteImport } from './routes/phone-otp'
@@ -44,6 +45,11 @@ const ConfirmRoute = ConfirmRouteImport.update({
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OwnerRoute = OwnerRouteImport.update({
+  id: '/owner',
+  path: '/owner',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PaymentRoute = PaymentRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/compare': typeof CompareRoute
   '/confirm': typeof ConfirmRoute
   '/otp': typeof OtpRoute
+  '/owner': typeof OwnerRoute
   '/payment': typeof PaymentRoute
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/compare': typeof CompareRoute
   '/confirm': typeof ConfirmRoute
   '/otp': typeof OtpRoute
+  '/owner': typeof OwnerRoute
   '/payment': typeof PaymentRoute
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/compare': typeof CompareRoute
   '/confirm': typeof ConfirmRoute
   '/otp': typeof OtpRoute
+  '/owner': typeof OwnerRoute
   '/payment': typeof PaymentRoute
   '/phone': typeof PhoneRoute
   '/phone-otp': typeof PhoneOtpRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/confirm'
     | '/otp'
+    | '/owner'
     | '/payment'
     | '/phone'
     | '/phone-otp'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/confirm'
     | '/otp'
+    | '/owner'
     | '/payment'
     | '/phone'
     | '/phone-otp'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/compare'
     | '/confirm'
     | '/otp'
+    | '/owner'
     | '/payment'
     | '/phone'
     | '/phone-otp'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   CompareRoute: typeof CompareRoute
   ConfirmRoute: typeof ConfirmRoute
   OtpRoute: typeof OtpRoute
+  OwnerRoute: typeof OwnerRoute
   PaymentRoute: typeof PaymentRoute
   PhoneRoute: typeof PhoneRoute
   PhoneOtpRoute: typeof PhoneOtpRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/owner': {
+      id: '/owner'
+      path: '/owner'
+      fullPath: '/owner'
+      preLoaderRoute: typeof OwnerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/payment': {
@@ -261,6 +281,7 @@ const rootRouteChildren: RootRouteChildren = {
   CompareRoute: CompareRoute,
   ConfirmRoute: ConfirmRoute,
   OtpRoute: OtpRoute,
+  OwnerRoute: OwnerRoute,
   PaymentRoute: PaymentRoute,
   PhoneRoute: PhoneRoute,
   PhoneOtpRoute: PhoneOtpRoute,
