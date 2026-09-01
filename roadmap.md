@@ -31,3 +31,9 @@
       `/api/chat/enabled`, `/api/data/store-details`, `/api/store-policy`.
       Today it only serves `/`, `/health`, `/socket.io/*`. Once added, the existing
       `/api-proxy/*` forwarding works with no frontend changes.
+
+## Open
+- Homepage stuck on loading spinner: cloned gosuksa.com bundle initializes /api-proxy/breinit + /api/user/init OK, but the SPA never mounts past the spinner. Likely waiting on reCAPTCHA (key registered for gosuksa.com, fails on localhost / tamnbcare.online) or another gosuksa-only init check inside the compiled bundle.
+- Remove KSA gate: /api-proxy/breinit already returns {ok:true} unconditionally; no other KSA gate remains in project code (src/lib/ksa-access.ts is unused now that / serves the mirrored shell).
+- Do NOT use Lovable Cloud (per user).
+- Unify mobile experience: the mirrored bundle already ships one responsive layout, but is blocked behind the spinner issue above.
