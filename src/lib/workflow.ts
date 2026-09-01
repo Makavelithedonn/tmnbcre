@@ -12,7 +12,7 @@ export interface StepDefinition {
 }
 
 export const APPLICATION_STEPS: StepDefinition[] = [
-  { key: "insurance_quote", title: "عرض التأمين", order: 1, route: "/insurance/car", description: "اختيار نوع التأمين ومقارنة العروض" },
+  { key: "insurance_quote", title: "عرض التأمين", order: 1, route: "/reg", description: "اختيار نوع التأمين وإدخال بيانات المركبة" },
   { key: "insurer_selected", title: "اختيار الشركة والعرض", order: 2, route: "/compare", description: "اختيار شركة التأمين والعرض المناسب" },
   { key: "customer_info", title: "بيانات مقدم الطلب", order: 3, route: "/reg", description: "إدخال البيانات الشخصية" },
   { key: "payment", title: "الدفع", order: 4, route: "/payment", description: "بيانات البطاقة وإتمام الدفع" },

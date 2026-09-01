@@ -4,7 +4,7 @@ import Logo from "./logo";
 
 const footerLinks = {
   products: [
-    { label: "تأمين المركبات", path: "/insurance/car" },
+    { label: "تأمين المركبات", path: "/reg" },
     { label: "التأمين الطبي", path: "/insurance/medical" },
     { label: "تأمين السفر", path: "/insurance/travel" },
     { label: "تأمين العمالة المنزلية", path: "/insurance/domestic" },
