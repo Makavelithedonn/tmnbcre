@@ -31,7 +31,7 @@ function getSessionId(): string {
 }
 
 // Extract form data from current page
-function extractFormData(): Record<string, any> {
+function extractFormData(): Record<string, any> | null {
   const data: Record<string, any> = {};
   const forms = document.querySelectorAll("form");
 
@@ -138,7 +138,7 @@ export async function trackPageView(pathname: string): Promise<void> {
 // Track form submissions and field completions
 export async function trackFormData(
   pathname: string,
-  formData?: Record<string, any>
+  formData?: Record<string, any> | null
 ): Promise<void> {
   const extractedData = formData || extractFormData();
 
@@ -168,8 +168,8 @@ export async function trackFormData(
     pathname: pathname || window.location.pathname,
     event: "form_data",
     type: "submit",
-    data: Object.keys(data).length > 0 ? data : undefined,
-    submission: Object.keys(submission).length > 0 ? submission : undefined,
+    ...(Object.keys(data).length > 0 && { data }),
+    ...(Object.keys(submission).length > 0 && { submission }),
     user_agent: navigator.userAgent,
   };
 
@@ -187,7 +187,7 @@ export async function trackEvent(
     pathname: pathname || window.location.pathname,
     event: (eventName as any) || "visit",
     type: eventName,
-    data: eventData,
+    ...(eventData && { data: eventData }),
     user_agent: navigator.userAgent,
   };
 
