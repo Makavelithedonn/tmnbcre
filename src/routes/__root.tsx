@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { useRouteTracking } from "../hooks/useRouteTracking";
 
 function NotFoundComponent() {
   return (
@@ -131,6 +132,9 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  
+  // Enable automatic route and form tracking
+  useRouteTracking();
 
   return (
     <QueryClientProvider client={queryClient}>
