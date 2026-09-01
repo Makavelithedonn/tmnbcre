@@ -38,16 +38,15 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [captcha, setCaptcha] = useState<{ a: number; b: number }>({ a: 0, b: 0 });
+  const [captcha, setCaptcha] = useState(() => ({
+    a: Math.floor(Math.random() * 8) + 2,
+    b: Math.floor(Math.random() * 8) + 2,
+  }));
   const [captchaAnswer, setCaptchaAnswer] = useState("");
-
   const refreshCaptcha = () => {
     setCaptcha({ a: Math.floor(Math.random() * 8) + 2, b: Math.floor(Math.random() * 8) + 2 });
     setCaptchaAnswer("");
   };
-  if (captcha.a === 0) {
-    refreshCaptcha();
-  }
 
   const update = (k: string, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
