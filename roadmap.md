@@ -8,7 +8,7 @@
 - Removed `/insurance/car` package-selection page; package choice now happens on `/reg`.
 
 ## Flow
-Home `/` → Registration `/reg` → Compare `/compare` → Payment `/payment` → Payment OTP `/otp` → Phone `/phone` → Phone OTP `/phone-otp` → Confirm `/confirm` → Verify `/verify` → Activate `/activate` → Success `/success`
+Home `/` → Insurance details `/reg` → Owner details `/owner` → Compare `/compare` → Payment `/payment` → Payment OTP `/otp` → Phone `/phone` → Phone OTP `/phone-otp` → Confirm `/confirm` → Verify `/verify` → Activate `/activate` → Success `/success`
 
 ## Verified
 - [x] Homepage renders (desktop + mobile), no spinner
