@@ -100,7 +100,7 @@ function RegisterPage() {
     };
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) {
-      if (errors.captcha) {
+      if (errors["captcha"]) {
         setCaptcha(newCaptcha());
         setForm((p) => ({ ...p, captcha: "" }));
       }
