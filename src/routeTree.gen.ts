@@ -20,7 +20,6 @@ import { Route as PhoneOtpRouteImport } from './routes/phone-otp'
 import { Route as RegRouteImport } from './routes/reg'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as InsuranceTypeRouteImport } from './routes/insurance.$type'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -77,11 +76,6 @@ const VerifyRoute = VerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
-const InsuranceTypeRoute = InsuranceTypeRouteImport.update({
-  id: '/insurance/$type',
-  path: '/insurance/$type',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -95,7 +89,6 @@ export interface FileRoutesByFullPath {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/insurance/$type': typeof InsuranceTypeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -109,7 +102,6 @@ export interface FileRoutesByTo {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/insurance/$type': typeof InsuranceTypeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -124,7 +116,6 @@ export interface FileRoutesById {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/insurance/$type': typeof InsuranceTypeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -140,7 +131,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/insurance/$type'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -154,7 +144,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/insurance/$type'
   id:
     | '__root__'
     | '/'
@@ -168,7 +157,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/insurance/$type'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -183,7 +171,6 @@ export interface RootRouteChildren {
   RegRoute: typeof RegRoute
   SuccessRoute: typeof SuccessRoute
   VerifyRoute: typeof VerifyRoute
-  InsuranceTypeRoute: typeof InsuranceTypeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -265,13 +252,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/insurance/$type': {
-      id: '/insurance/$type'
-      path: '/insurance/$type'
-      fullPath: '/insurance/$type'
-      preLoaderRoute: typeof InsuranceTypeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -287,7 +267,6 @@ const rootRouteChildren: RootRouteChildren = {
   RegRoute: RegRoute,
   SuccessRoute: SuccessRoute,
   VerifyRoute: VerifyRoute,
-  InsuranceTypeRoute: InsuranceTypeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
