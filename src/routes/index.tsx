@@ -23,7 +23,6 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import heroImage from "@/assets/becaree-hero.png";
-import { checkKsaAccess } from "@/lib/ksa-access";
 
 export const Route = createFileRoute("/")({
   head: () => ({
