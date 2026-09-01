@@ -120,30 +120,6 @@ const faqs = [
 
 function StartButton({ outline = false }: { outline?: boolean }) {
   const navigate = useNavigate();
-  const [checking, setChecking] = useState(false);
-
-  const handleStart = async () => {
-    if (checking) return;
-    setChecking(true);
-    const access = await checkKsaAccess();
-    setChecking(false);
-
-    if (access === "allowed") {
-      await navigate({ to: "/insurance/$type", params: { type: "car" } });
-      return;
-    }
-
-    if (access === "outside_ksa") {
-      toast.error("عذراً، الموقع يعمل داخل المملكة العربية السعودية فقط.", {
-        duration: 6000,
-      });
-      return;
-    }
-
-    toast.error("تعذر التحقق من موقعك حالياً. حاول مرة أخرى.", {
-      duration: 5000,
-    });
-  };
 
   return (
     <Button
@@ -151,11 +127,10 @@ function StartButton({ outline = false }: { outline?: boolean }) {
       variant={outline ? "outline" : "default"}
       size="lg"
       className="h-12 w-full text-base font-bold"
-      disabled={checking}
-      onClick={handleStart}
+      onClick={() => navigate({ to: "/insurance/$type", params: { type: "car" } })}
     >
-      {checking ? "جارٍ التحقق..." : "ابدأ الآن"}
-      {!checking && <ArrowLeft className="h-5 w-5" />}
+      ابدأ الآن
+      <ArrowLeft className="h-5 w-5" />
     </Button>
   );
 }
