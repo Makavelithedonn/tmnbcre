@@ -14,6 +14,8 @@ Home `/` → Insurance details `/reg` → Owner details `/owner` → Compare `/c
 - [x] Homepage renders (desktop + mobile), no spinner
 - [x] "ابدأ الآن" navigates to `/reg` and creates an application
 - [x] `/reg` shows 3 insurance options: ضد الغير / ضد الغير بلس / شامل
+- [x] `/reg` submits insurance details and navigates to `/owner`
+- [x] `/owner` collects policy-owner details and navigates to `/compare`
 - [x] tsgo typecheck passes
 - [x] Supabase writes still work (applications, application_steps, application_history return 201)
 
