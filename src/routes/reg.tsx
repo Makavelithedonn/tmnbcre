@@ -75,9 +75,8 @@ function RegisterPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
-    if (parseInt(captchaAnswer, 10) !== captcha.a + captcha.b) {
-      setError("رمز التحقق غير صحيح");
-      refreshCaptcha();
+    if (!captchaToken) {
+      setError("يرجى إكمال التحقق الأمني");
       return;
     }
 
