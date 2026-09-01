@@ -145,8 +145,8 @@ function ComparePage() {
     
     console.log("[compare] insurer_selected submission result:", stepRes);
     setLoading(false);
-    console.log("[compare] Navigating to /reg");
-    void navigate({ to: "/reg" });
+    console.log("[compare] Navigating to /payment");
+    void navigate({ to: "/payment" });
   };
 
 

@@ -63,7 +63,7 @@ function InsuranceQuotePage() {
     await submitStep(app.application.application_id, "insurance_quote", {
       insuranceScope: packageName,
     });
-    void navigate({ to: "/compare" });
+    void navigate({ to: "/reg" });
   };
 
   return (

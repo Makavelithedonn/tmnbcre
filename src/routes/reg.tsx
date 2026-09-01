@@ -99,8 +99,8 @@ function RegisterPage() {
     if (!res.success) setError(res.error || "حدث خطأ");
     setLoading(false);
     if (res.success) {
-      console.log("[reg] Submission successful, navigating to /payment");
-      void navigate({ to: "/payment" });
+      console.log("[reg] Submission successful, navigating to /compare");
+      void navigate({ to: "/compare" });
     } else {
       console.log("[reg] Submission failed with error:", res.error);
     }
