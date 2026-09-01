@@ -153,9 +153,10 @@ function RegisterPage() {
 
               <div>
                 <label className="mb-2 block text-sm font-medium text-dark-700">نوع التأمين المطلوب</label>
-                <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   {[
-                    { v: "third_party", label: "تأمين ضد الغير", desc: "تغطية أساسية للطرف الثالث" },
+                    { v: "third_party", label: "ضد الغير", desc: "تغطية أساسية للطرف الثالث" },
+                    { v: "tpl-plus", label: "ضد الغير بلس", desc: "تغطية الغير مع مزايا إضافية" },
                     { v: "comprehensive", label: "تأمين شامل", desc: "تغطية كاملة لسيارتك" },
                   ].map((o) => (
                     <button
