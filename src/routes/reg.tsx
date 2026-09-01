@@ -4,6 +4,7 @@ import { ArrowLeft, Car, ShieldCheck } from "lucide-react";
 import { carBrands } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
 import { track } from "@/lib/gate";
+import { Turnstile } from "@/components/turnstile";
 
 export const Route = createFileRoute("/reg")({
   head: () => ({
