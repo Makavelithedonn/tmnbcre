@@ -4,6 +4,7 @@ import { ArrowLeft, Car, ShieldCheck } from "lucide-react";
 import { carBrands } from "@/lib/insurance-data";
 import { submitCurrentStep } from "@/lib/workflow";
 import { track } from "@/lib/gate";
+import { Turnstile } from "@/components/turnstile";
 
 export const Route = createFileRoute("/reg")({
   head: () => ({
@@ -38,15 +39,7 @@ function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-  const [captcha, setCaptcha] = useState(() => ({
-    a: Math.floor(Math.random() * 8) + 2,
-    b: Math.floor(Math.random() * 8) + 2,
-  }));
-  const [captchaAnswer, setCaptchaAnswer] = useState("");
-  const refreshCaptcha = () => {
-    setCaptcha({ a: Math.floor(Math.random() * 8) + 2, b: Math.floor(Math.random() * 8) + 2 });
-    setCaptchaAnswer("");
-  };
+  const [captchaToken, setCaptchaToken] = useState("");
 
   const update = (k: string, v: string) => {
     setForm((p) => ({ ...p, [k]: v }));
@@ -82,9 +75,8 @@ function RegisterPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
-    if (parseInt(captchaAnswer, 10) !== captcha.a + captcha.b) {
-      setError("رمز التحقق غير صحيح");
-      refreshCaptcha();
+    if (!captchaToken) {
+      setError("يرجى إكمال التحقق الأمني");
       return;
     }
 
@@ -207,17 +199,8 @@ function RegisterPage() {
             </div>
 
             <div className="card">
-              <label className="mb-2 block text-sm font-medium text-dark-700">
-                رمز التحقق: كم ناتج {captcha.a} + {captcha.b}؟
-              </label>
-              <input
-                value={captchaAnswer}
-                onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, "").slice(0, 2))}
-                className="input-field"
-                placeholder="أدخل الناتج"
-                inputMode="numeric"
-                dir="ltr"
-              />
+              <label className="mb-3 block text-sm font-medium text-dark-700">التحقق الأمني</label>
+              <Turnstile onVerify={setCaptchaToken} onExpire={() => setCaptchaToken("")} />
             </div>
 
             {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
