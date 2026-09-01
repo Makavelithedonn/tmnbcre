@@ -82,6 +82,12 @@ function RegisterPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
+    if (parseInt(captchaAnswer, 10) !== captcha.a + captcha.b) {
+      setError("رمز التحقق غير صحيح");
+      refreshCaptcha();
+      return;
+    }
+
     setLoading(true);
     track("submit", { step: "insurance_quote" });
     const res = await submitCurrentStep("insurance_quote", form);
@@ -198,6 +204,20 @@ function RegisterPage() {
                   {err("serialNumber")}
                 </div>
               </div>
+            </div>
+
+            <div className="card">
+              <label className="mb-2 block text-sm font-medium text-dark-700">
+                رمز التحقق: كم ناتج {captcha.a} + {captcha.b}؟
+              </label>
+              <input
+                value={captchaAnswer}
+                onChange={(e) => setCaptchaAnswer(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                className="input-field"
+                placeholder="أدخل الناتج"
+                inputMode="numeric"
+                dir="ltr"
+              />
             </div>
 
             {error && <p className="rounded-lg bg-red-50 px-4 py-2 text-sm text-red-600">{error}</p>}
