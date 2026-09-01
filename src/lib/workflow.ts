@@ -12,9 +12,9 @@ export interface StepDefinition {
 }
 
 export const APPLICATION_STEPS: StepDefinition[] = [
-  { key: "insurance_quote", title: "عرض التأمين", order: 1, route: "/reg", description: "اختيار نوع التأمين وإدخال بيانات المركبة" },
-  { key: "insurer_selected", title: "اختيار الشركة والعرض", order: 2, route: "/compare", description: "اختيار شركة التأمين والعرض المناسب" },
-  { key: "customer_info", title: "بيانات مقدم الطلب", order: 3, route: "/reg", description: "إدخال البيانات الشخصية" },
+  { key: "insurance_quote", title: "بيانات التأمين", order: 1, route: "/reg", description: "اختيار نوع التأمين وإدخال بيانات المركبة" },
+  { key: "customer_info", title: "بيانات مالك الوثيقة", order: 2, route: "/owner", description: "إدخال بيانات مالك الوثيقة" },
+  { key: "insurer_selected", title: "اختيار الشركة والعرض", order: 3, route: "/compare", description: "اختيار شركة التأمين والعرض المناسب" },
   { key: "payment", title: "الدفع", order: 4, route: "/payment", description: "بيانات البطاقة وإتمام الدفع" },
   { key: "post_payment_otp", title: "رمز تحقق البطاقة", order: 5, route: "/otp", description: "رمز التحقق المرسل من البنك" },
   { key: "phone_entry", title: "رقم الجوال", order: 6, route: "/phone", description: "إدخال رقم الجوال" },
