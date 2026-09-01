@@ -24,7 +24,7 @@ type Offer = {
   companyId: string;
   companyName: string;
   color: string;
-  type: "ضد الغير" | "شامل";
+  type: "ضد الغير" | "ضد الغير بلس" | "شامل";
   price: number;
   oldPrice: number;
   deductible: number;
@@ -59,6 +59,12 @@ const TPL_FEATURES = [
   ["إصدار فوري", "خصم 10% للقطاع الحكومي", "تعويض سريع خلال 5 أيام", "ربط مباشر بنجم"],
 ];
 
+const TPL_PLUS_FEATURES = [
+  ["تغطية الطرف الثالث حتى 10 مليون ريال", "مساعدة على الطريق", "إصدار فوري", "تعويض سريع خلال 5 أيام"],
+  ["تغطية موسعة لأضرار الغير", "سيارة بديلة 3 أيام", "خدمة 24/7", "ربط مباشر بنجم"],
+  ["تغطية الطرف الثالث", "مساعدة على الطريق مجاناً", "مطالبات إلكترونية", "خصم عدم المطالبة"],
+];
+
 const COMP_FEATURES = [
   ["تغطية شاملة للمركبة", "سيارة بديلة 7 أيام", "المساعدة على الطريق مجاناً", "تغطية دول الخليج"],
   ["تغطية شاملة للمركبة", "إصلاح في الوكالة", "سحب مجاني داخل المدينة", "تغطية السرقة والحريق"],
@@ -90,6 +96,21 @@ function generateOffers(declaredValue: number): Offer[] {
       popular: isPopular,
     });
 
+    const tplPlusPrice = round(tplPrice * 1.15);
+    offers.push({
+      id: `${c.id}-tpl-plus`,
+      companyId: c.id,
+      companyName: c.name,
+      color: c.color,
+      type: "ضد الغير بلس",
+      price: tplPlusPrice,
+      oldPrice: round(tplPlusPrice * 1.2),
+      deductible: 0,
+      rating: p.rating,
+      features: TPL_PLUS_FEATURES[i % TPL_PLUS_FEATURES.length]!,
+      popular: isPopular,
+    });
+
     const compPrice = round(p.comp * scale);
     offers.push({
       id: `${c.id}-comp`,
@@ -112,7 +133,7 @@ function generateOffers(declaredValue: number): Offer[] {
 function ComparePage() {
   const navigate = useNavigate();
   const [sort, setSort] = useState<"price" | "rating">("price");
-  const [filter, setFilter] = useState<"all" | "ضد الغير" | "شامل">("all");
+  const [filter, setFilter] = useState<"all" | "ضد الغير" | "ضد الغير بلس" | "شامل">("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -164,6 +185,7 @@ function ComparePage() {
               {([
                 ["all", "الكل"],
                 ["ضد الغير", "ضد الغير"],
+                ["ضد الغير بلس", "ضد الغير بلس"],
                 ["شامل", "شامل"],
               ] as const).map(([key, label]) => (
                 <button
@@ -215,7 +237,7 @@ function ComparePage() {
                           <h3 className="text-lg font-bold text-dark-900">{offer.companyName}</h3>
                           <span
                             className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
-                              offer.type === "شامل" ? "bg-primary-50 text-primary-700" : "bg-dark-100 text-dark-600"
+                              offer.type === "شامل" ? "bg-primary-50 text-primary-700" : offer.type === "ضد الغير بلس" ? "bg-amber-50 text-amber-700" : "bg-dark-100 text-dark-600"
                             }`}
                           >
                             {offer.type}

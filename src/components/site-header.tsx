@@ -10,7 +10,7 @@ const navLinks = [
 ];
 
 const productMenu = [
-  { name: "تأمين المركبات", path: "/insurance/car", icon: "🚗" },
+  { name: "تأمين المركبات", path: "/reg", icon: "🚗" },
   { name: "التأمين الطبي", path: "/insurance/medical", icon: "🏥" },
   { name: "تأمين السفر", path: "/insurance/travel", icon: "✈️" },
   { name: "تأمين العمالة المنزلية", path: "/insurance/domestic", icon: "👥" },

@@ -1,6 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
 import {
   ArrowLeft,
   BadgeCheck,
@@ -22,6 +21,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { createApplication } from "@/lib/workflow";
 import heroImage from "@/assets/becaree-hero.png";
 
 export const Route = createFileRoute("/")({
@@ -119,6 +119,17 @@ const faqs = [
 
 function StartButton({ outline = false }: { outline?: boolean }) {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    if (loading) return;
+    setLoading(true);
+    const app = await createApplication("car");
+    setLoading(false);
+    if (app) {
+      void navigate({ to: "/reg" });
+    }
+  };
 
   return (
     <Button
@@ -126,9 +137,10 @@ function StartButton({ outline = false }: { outline?: boolean }) {
       variant={outline ? "outline" : "default"}
       size="lg"
       className="h-12 w-full text-base font-bold"
-      onClick={() => navigate({ to: "/insurance/$type", params: { type: "car" } })}
+      onClick={() => void handleClick()}
+      disabled={loading}
     >
-      ابدأ الآن
+      {loading ? "جاري التحميل..." : "ابدأ الآن"}
       <ArrowLeft className="h-5 w-5" />
     </Button>
   );
