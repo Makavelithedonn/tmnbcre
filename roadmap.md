@@ -12,9 +12,11 @@ Home `/` → Registration `/reg` → Compare `/compare` → Payment `/payment` �
 
 ## Verified
 - [x] Homepage renders (desktop + mobile), no spinner
+- [x] "ابدأ الآن" navigates to `/reg` and creates an application
+- [x] `/reg` shows 3 insurance options: ضد الغير / ضد الغير بلس / شامل
 - [x] tsgo typecheck passes
+- [x] Supabase writes still work (applications, application_steps, application_history return 201)
 
 ## Open
 - [ ] Re-verify compare/reg/payment steps end-to-end after flow change
-- [ ] Confirm Supabase writes still land on the dashboard
 - [ ] Answer user: explain frontend/database/backend/admin dashboard setup
