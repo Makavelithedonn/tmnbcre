@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { getCard, Card } from '../../lib/cards.client';
 import CardDetail from '../../components/cards/CardDetail';
+import type { Card } from '../../lib/cards.client';
 
 export const Route = createFileRoute('/cards/$id')({
   component: CardDetailPage,
@@ -14,7 +14,10 @@ function CardDetailPage() {
 
   useEffect(() => {
     if (!id) return;
-    getCard(id).then((c) => setCard(c)).catch(console.error);
+    import('../../lib/cards.client')
+      .then(({ getCard }) => getCard(id))
+      .then((c) => setCard(c))
+      .catch(console.error);
   }, [id]);
 
   return (
