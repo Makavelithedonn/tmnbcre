@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ArrowLeft, CreditCard, Lock, Check } from "lucide-react";
 import { trackEvent } from "@/lib/tracker";
 
-export const Route = createFileRoute("/payment" as any)({
+export const Route = createFileRoute("/payment")({
   head: () => ({
     meta: [
       { title: "الدفع — بيكير" },
