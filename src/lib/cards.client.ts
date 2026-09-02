@@ -15,7 +15,7 @@ async function request(path: string, opts: RequestInit = {}) {
     Accept: 'application/json',
     ...(opts.headers as Record<string, string> || {}),
   };
-  if (API_KEY) headers['Authorization'] = `Bearer ${API_KEY}`;
+  if (API_KEY) headers['X-API-KEY'] = API_KEY;
 
   const res = await fetch(`${BASE}${path}`, {
     ...opts,

@@ -3,12 +3,12 @@ Cards integration
 Configuration
 
 - VITE_CARDS_API_BASE - base URL for the Cloudflare Worker API (default: https://cards-api-worker.devopsjacob.workers.dev/cards)
-- VITE_CARDS_API_KEY - optional API token; if set the frontend will send it as an Authorization: Bearer <token> header
+- VITE_CARDS_API_KEY - required API token for production; if set the frontend will send it as X-API-KEY header
 
 CORS and auth
 
-- The Worker currently does not add CORS headers. For browser calls, either enable CORS in the Worker or proxy requests through your server. The frontend does not automatically handle CORS.
-- The Worker currently has no auth enforced. For production it's recommended to require an Authorization: Bearer token (WORKER_API_TOKEN). If you set VITE_CARDS_API_KEY in the frontend environment, the client will send it as Authorization: Bearer <token>.
+- The Worker now handles CORS (including OPTIONS preflight). For browser calls you must ensure the frontend origin is allowed by the Worker.
+- The Worker requires an X-API-KEY header in production. Set VITE_CARDS_API_KEY in your hosting/CI environment (Vercel/Netlify/Github Actions) to the WORKER_API_KEY secret and the frontend will send it automatically.
 
 Client
 
