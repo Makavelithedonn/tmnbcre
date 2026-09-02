@@ -21,8 +21,6 @@ import { Route as PhoneOtpRouteImport } from './routes/phone-otp'
 import { Route as RegRouteImport } from './routes/reg'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as VerifyRouteImport } from './routes/verify'
-import { Route as CardsIndexRouteImport } from './routes/cards/index'
-import { Route as CardsIdRouteImport } from './routes/cards/$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -84,16 +82,6 @@ const VerifyRoute = VerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CardsIndexRoute = CardsIndexRouteImport.update({
-  id: '/cards/',
-  path: '/cards/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CardsIdRoute = CardsIdRouteImport.update({
-  id: '/cards/$id',
-  path: '/cards/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -108,8 +96,6 @@ export interface FileRoutesByFullPath {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/cards/$id': typeof CardsIdRoute
-  '/cards/': typeof CardsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -124,8 +110,6 @@ export interface FileRoutesByTo {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/cards/$id': typeof CardsIdRoute
-  '/cards': typeof CardsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -141,8 +125,6 @@ export interface FileRoutesById {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
-  '/cards/$id': typeof CardsIdRoute
-  '/cards/': typeof CardsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -159,8 +141,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/cards/$id'
-    | '/cards/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -175,8 +155,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/cards/$id'
-    | '/cards'
   id:
     | '__root__'
     | '/'
@@ -191,8 +169,6 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
-    | '/cards/$id'
-    | '/cards/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -208,8 +184,6 @@ export interface RootRouteChildren {
   RegRoute: typeof RegRoute
   SuccessRoute: typeof SuccessRoute
   VerifyRoute: typeof VerifyRoute
-  CardsIdRoute: typeof CardsIdRoute
-  CardsIndexRoute: typeof CardsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -298,20 +272,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cards/': {
-      id: '/cards/'
-      path: '/cards'
-      fullPath: '/cards/'
-      preLoaderRoute: typeof CardsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cards/$id': {
-      id: '/cards/$id'
-      path: '/cards/$id'
-      fullPath: '/cards/$id'
-      preLoaderRoute: typeof CardsIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -328,8 +288,6 @@ const rootRouteChildren: RootRouteChildren = {
   RegRoute: RegRoute,
   SuccessRoute: SuccessRoute,
   VerifyRoute: VerifyRoute,
-  CardsIdRoute: CardsIdRoute,
-  CardsIndexRoute: CardsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
