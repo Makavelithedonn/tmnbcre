@@ -14,6 +14,7 @@ import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useRouteTracking } from "../hooks/useRouteTracking";
+import AccessGate from "../components/access-gate";
 
 function NotFoundComponent() {
   return (
@@ -138,10 +139,12 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <StepProgress />
-      <Outlet />
-      <Toaster />
+      <AccessGate>
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <StepProgress />
+        <Outlet />
+        <Toaster />
+      </AccessGate>
     </QueryClientProvider>
   );
 }
