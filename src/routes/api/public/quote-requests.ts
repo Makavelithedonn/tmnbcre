@@ -63,7 +63,7 @@ export const Route = createFileRoute('/api/public/quote-requests')({
                ${d.insurerOfferSar ?? null}, ${sql.json(d)})
             RETURNING id
           `
-          const id = rows[0]?.id
+          const id = rows[0]?.['id'] as string
           await sql`
             INSERT INTO quote_activity (quote_request_id, actor, action, note)
             VALUES (${id}, 'public', 'created', 'Quote request submitted')
