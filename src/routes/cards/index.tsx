@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import CardForm from '../../components/cards/CardForm';
 import CardList from '../../components/cards/CardList';
-import { searchCards, getCard, Card } from '../../lib/cards.client';
+import type { Card } from '../../lib/cards.client';
 
 export const Route = createFileRoute('/cards/')({
   component: CardsPage,
@@ -15,6 +15,7 @@ function CardsPage() {
 
   async function load(qs = '') {
     try {
+      const { searchCards } = await import('../../lib/cards.client');
       const res = await searchCards(qs);
       setCards(res || []);
     } catch (err) {
@@ -52,6 +53,7 @@ function CardsPage() {
           <CardList
             cards={cards}
             onView={async (id) => {
+              const { getCard } = await import('../../lib/cards.client');
               const c = await getCard(id);
               setSelected(c);
             }}
