@@ -5,7 +5,8 @@ export type Card = {
   createdAt?: string;
 };
 
-const BASE = (import.meta as any).env.VITE_CARDS_API_BASE || '/api/cards';
+const DEFAULT_BASE = 'https://cards-api-worker.devopsjacob.workers.dev/cards';
+const BASE = (import.meta as any).env.VITE_CARDS_API_BASE || DEFAULT_BASE;
 const API_KEY = (import.meta as any).env.VITE_CARDS_API_KEY || '';
 
 async function request(path: string, opts: RequestInit = {}) {
