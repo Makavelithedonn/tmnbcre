@@ -21,6 +21,7 @@ import { Route as PhoneOtpRouteImport } from './routes/phone-otp'
 import { Route as RegRouteImport } from './routes/reg'
 import { Route as SuccessRouteImport } from './routes/success'
 import { Route as VerifyRouteImport } from './routes/verify'
+import { Route as ApiPublicQuoteRequestsRouteImport } from './routes/api/public/quote-requests'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -82,6 +83,11 @@ const VerifyRoute = VerifyRouteImport.update({
   path: '/verify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicQuoteRequestsRoute = ApiPublicQuoteRequestsRouteImport.update({
+  id: '/api/public/quote-requests',
+  path: '/api/public/quote-requests',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
+  '/api/public/quote-requests': typeof ApiPublicQuoteRequestsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
+  '/api/public/quote-requests': typeof ApiPublicQuoteRequestsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -125,6 +133,7 @@ export interface FileRoutesById {
   '/reg': typeof RegRoute
   '/success': typeof SuccessRoute
   '/verify': typeof VerifyRoute
+  '/api/public/quote-requests': typeof ApiPublicQuoteRequestsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +150,7 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
+    | '/api/public/quote-requests'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +165,7 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
+    | '/api/public/quote-requests'
   id:
     | '__root__'
     | '/'
@@ -169,6 +180,7 @@ export interface FileRouteTypes {
     | '/reg'
     | '/success'
     | '/verify'
+    | '/api/public/quote-requests'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   RegRoute: typeof RegRoute
   SuccessRoute: typeof SuccessRoute
   VerifyRoute: typeof VerifyRoute
+  ApiPublicQuoteRequestsRoute: typeof ApiPublicQuoteRequestsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -272,6 +285,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VerifyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/quote-requests': {
+      id: '/api/public/quote-requests'
+      path: '/api/public/quote-requests'
+      fullPath: '/api/public/quote-requests'
+      preLoaderRoute: typeof ApiPublicQuoteRequestsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -288,6 +308,7 @@ const rootRouteChildren: RootRouteChildren = {
   RegRoute: RegRoute,
   SuccessRoute: SuccessRoute,
   VerifyRoute: VerifyRoute,
+  ApiPublicQuoteRequestsRoute: ApiPublicQuoteRequestsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
