@@ -22,8 +22,10 @@ describe('cards.client', () => {
   });
 
   it('searchCards returns list', async () => {
-    global.fetch = mockFetch([{ id: '3', name: 'C', phones: [] }]) as any;
+    // Worker responds with { results: [...] }
+    global.fetch = mockFetch({ results: [{ id: '3', name: 'C', phones: [] }] }) as any;
     const res = await searchCards('C');
     expect(Array.isArray(res)).toBe(true);
+    expect(res[0].id).toBe('3');
   });
 });

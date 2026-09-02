@@ -15,7 +15,7 @@ async function request(path: string, opts: RequestInit = {}) {
     Accept: 'application/json',
     ...(opts.headers as Record<string, string> || {}),
   };
-  if (API_KEY) headers['X-API-KEY'] = API_KEY;
+  if (API_KEY) headers['Authorization'] = `Bearer ${API_KEY}`;
 
   const res = await fetch(`${BASE}${path}`, {
     ...opts,
@@ -57,6 +57,8 @@ export async function deleteCard(id: string) {
 
 export async function searchCards(q: string) {
   const qs = new URLSearchParams();
-  if (q) qs.set('q', q);
-  return request(`/search?${qs.toString()}`, { method: 'GET' }) as Promise<Card[]>;
+  if (q) qs.set('search', q);
+  const res = await request(`?${qs.toString()}`, { method: 'GET' });
+  // Worker responds with { results: [...] }
+  return (res?.results || []) as Card[];
 }
