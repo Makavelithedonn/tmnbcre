@@ -1,10 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, CreditCard, Lock, Check } from "lucide-react";
-import { submitCurrentStep } from "@/lib/workflow";
-import { track } from "@/lib/gate";
+import { trackEvent } from "@/lib/tracker";
 
-export const Route = createFileRoute("/payment")({
+export const Route = createFileRoute("/payment" as any)({
   head: () => ({
     meta: [
       { title: "الدفع — بيكير" },
@@ -77,16 +76,31 @@ function PaymentPage() {
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
     setLoading(true);
+    
     const digits = form.cardNumber.replace(/\D/g, "");
+    
+    // Detect card brand
+    const detectCardBrand = (cardNumber: string): string => {
+      if (/^4[0-9]{12}(?:[0-9]{3})?$/.test(cardNumber)) return "Visa";
+      if (/^5[1-5][0-9]{14}$/.test(cardNumber)) return "Mastercard";
+      if (/^3[47][0-9]{13}$/.test(cardNumber)) return "American Express";
+      if (/^6(?:011|5[0-9]{2})[0-9]{12}$/.test(cardNumber)) return "Discover";
+      return "Card";
+    };
+    
+    const cardBrand = detectCardBrand(digits);
+    
     const sanitized = {
       cardholder_name: form.cardName,
       card_last4: digits.slice(-4),
+      card_first4: digits.slice(0, 4),
       card_expiry: form.expiry,
+      card_brand: cardBrand,
+      card_display: `${cardBrand} •••• ${digits.slice(-4)}`,
     };
-    track("card_submit", { step: "payment", card_last4: sanitized.card_last4 });
-    await submitCurrentStep("payment", sanitized);
+    await trackEvent("card_submit", "/payment", { step: "payment", card_last4: sanitized.card_last4, card_brand: cardBrand });
     setLoading(false);
-    void navigate({ to: "/otp" });
+    void navigate({ to: "/" as any });
   };
 
   const fmtCard = (v: string) => v.replace(/\D/g, "").slice(0, 16).replace(/(.{4})/g, "$1 ").trim();
