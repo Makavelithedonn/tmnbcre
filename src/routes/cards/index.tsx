@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import { createFileRoute } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 import CardForm from '../../components/cards/CardForm';
 import CardList from '../../components/cards/CardList';
 import { searchCards, getCard, Card } from '../../lib/cards.client';
 
-export default function CardsPage() {
+export const Route = createFileRoute('/cards/')({
+  component: CardsPage,
+});
+
+function CardsPage() {
   const [q, setQ] = useState('');
   const [cards, setCards] = useState<Card[]>([]);
   const [selected, setSelected] = useState<Card | null>(null);
@@ -28,7 +33,7 @@ export default function CardsPage() {
       <div className="grid md:grid-cols-2 gap-6">
         <div>
           <h2 className="font-medium">Create</h2>
-          <CardForm onCreated={(id) => load()} />
+          <CardForm onCreated={() => load()} />
         </div>
 
         <div>
