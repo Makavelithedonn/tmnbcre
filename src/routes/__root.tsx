@@ -14,6 +14,7 @@ import { Toaster } from "../components/ui/sonner";
 import StepProgress from "../components/step-progress";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { useRouteTracking } from "../hooks/useRouteTracking";
+import AccessGate from "../components/access-gate";
 
 function NotFoundComponent() {
   return (
